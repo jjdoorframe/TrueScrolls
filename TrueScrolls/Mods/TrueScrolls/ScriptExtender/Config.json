@@ -1,0 +1,7 @@
+{
+    "RequiredVersion": 20,
+    "ModTable": "TrueScrolls-3099abde-7bad-48a6-900d-3a3b67172ded",
+    "FeatureFlags": [
+        "Lua"
+    ]
+}

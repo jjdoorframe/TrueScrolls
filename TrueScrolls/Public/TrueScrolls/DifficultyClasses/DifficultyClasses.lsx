@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<save>
+    <version major="4" minor="0" revision="9" build="320"/>
+    <region id="DifficultyClasses">
+        <node id="root">
+            <children>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="1"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-9"/>
+                    <attribute id="UUID" type="guid" value="a73f1a07-853a-4b5a-9dcb-c432756416cb"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="2"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-8"/>
+                    <attribute id="UUID" type="guid" value="9fc259e6-de70-4d9f-9427-6ad24989d387"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="3"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-7"/>
+                    <attribute id="UUID" type="guid" value="f8ff86fb-59f2-467f-acea-13298549d082"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="4"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-6"/>
+                    <attribute id="UUID" type="guid" value="ed6ff833-2749-473b-a5b9-62368e5044e8"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="5"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-5"/>
+                    <attribute id="UUID" type="guid" value="705849d9-7e26-45d9-8b7a-bc641e7ae137"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="6"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-4"/>
+                    <attribute id="UUID" type="guid" value="95a34899-01c4-461c-965d-facb257fca2a"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="7"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-3"/>
+                    <attribute id="UUID" type="guid" value="677b93b7-55e0-4269-bf6f-e25074568430"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="8"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-2"/>
+                    <attribute id="UUID" type="guid" value="9d728a5e-5b9f-4a8b-bcfa-3459285ac618"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="9"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls-1"/>
+                    <attribute id="UUID" type="guid" value="35d24d3d-6204-4547-bc38-73d92c095bf1"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="10"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls0"/>
+                    <attribute id="UUID" type="guid" value="315636f7-fa56-4387-93dc-4d01307434a9"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="11"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls1"/>
+                    <attribute id="UUID" type="guid" value="2cf23b54-20b9-4e96-a0e5-48bf36f1ef79"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="12"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls2"/>
+                    <attribute id="UUID" type="guid" value="9a11d469-a1fe-458f-9f9e-6ed9462061c3"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="13"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls3"/>
+                    <attribute id="UUID" type="guid" value="3773fc3a-4f0c-4de4-81ce-b8e848ed3f7e"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="14"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls4"/>
+                    <attribute id="UUID" type="guid" value="fd790959-ce3e-4c72-a1bb-ca8e7d50d93d"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="15"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls5"/>
+                    <attribute id="UUID" type="guid" value="d142c3d3-20da-4c85-a7d3-036c86c245b4"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="16"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls6"/>
+                    <attribute id="UUID" type="guid" value="3e324f0c-e201-413b-be72-cd8b051f1ab1"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="17"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls7"/>
+                    <attribute id="UUID" type="guid" value="7255dc8c-4736-45ec-a5ee-e9ae69f609d7"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="18"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls8"/>
+                    <attribute id="UUID" type="guid" value="eccfc15f-bffa-4703-87de-4df2b59733fa"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="19"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls9"/>
+                    <attribute id="UUID" type="guid" value="425f79b7-c6d8-49d8-9f12-5a1755171522"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="20"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls10"/>
+                    <attribute id="UUID" type="guid" value="2bbf4378-ba88-45c2-bac0-16532f918a3d"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="21"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls11"/>
+                    <attribute id="UUID" type="guid" value="2487019c-4a01-410f-87a1-139233936872"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="22"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls12"/>
+                    <attribute id="UUID" type="guid" value="2aca566f-32b1-4eb1-b415-4825f6720596"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="23"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls13"/>
+                    <attribute id="UUID" type="guid" value="88ce202f-d04d-4c12-9ea7-ceb4be05a268"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="24"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls14"/>
+                    <attribute id="UUID" type="guid" value="b3e97b50-eee2-4279-ae0b-7aed7a46b069"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="25"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls15"/>
+                    <attribute id="UUID" type="guid" value="2b783c12-aa6a-46c9-a2a2-3a39efb025e5"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="26"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls16"/>
+                    <attribute id="UUID" type="guid" value="1665b57b-5ac2-44de-8dbb-07295a1b89c2"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="27"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls17"/>
+                    <attribute id="UUID" type="guid" value="25abf340-30b1-4708-b838-32d53fd85269"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="28"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls18"/>
+                    <attribute id="UUID" type="guid" value="4dc74262-73d2-4579-a305-2467917bc3d7"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="29"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls19"/>
+                    <attribute id="UUID" type="guid" value="2dd8b6f5-ce44-4e88-af30-e59c26a61afd"/>
+                </node>
+                <node id="DifficultyClass">
+                    <attribute id="Difficulties" type="LSString" value="30"/>
+                    <attribute id="Name" type="LSString" value="TrueScrolls20"/>
+                    <attribute id="UUID" type="guid" value="20996974-e31d-4b17-abc9-765239423269"/>
+                </node>
+            </children>
+        </node>
+    </region>
+</save>

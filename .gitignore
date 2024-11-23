@@ -1,0 +1,6 @@
+# Ignore mod packages
+*.zip
+*.pak
+
+# Ignore VS
+.vscode/

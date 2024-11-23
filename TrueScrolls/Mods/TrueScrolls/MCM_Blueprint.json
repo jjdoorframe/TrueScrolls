@@ -1,0 +1,14 @@
+{
+    "SchemaVersion": 1,
+    "Optional": true,
+    "ModName": "True Scrolls",
+    "Tabs": [
+        {
+            "TabId": "truescrolls_main",
+            "TabName": "True Scrolls",
+            "Handles": {
+                "NameHandle": "h249f9790e2314b099da72082314f2bd29d9d"
+            }
+        }
+    ]
+}

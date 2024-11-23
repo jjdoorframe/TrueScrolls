@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<contentList xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <content contentuid="hd76525156d7f4343af66ba6d1c08303c52b0" version="1">Not in your spell list!</content>
+  <content contentuid="h16c18a265ad1492b9435e000adc2fbb1e3ea" version="1">Scroll Casting</content>
+  <content contentuid="h249f9790e2314b099da72082314f2bd29d9d" version="1">True Scrolls</content>
+  <content contentuid="h1b7de7ffab3d4b31abff44128d29da568670" version="1">A Spell Scroll bears the words of a single spell, written in a mystical cipher. If the spell is on your spell list, you can read the scroll and cast its spell without Material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell's normal casting time. Once the spell is cast, the scroll crumbles to dust. If the casting is interrupted, the scroll isn't lost.&lt;br&gt;If the spell is on your spell list but of a higher level than you can normally cast, you make an ability check using your spellcasting ability to determine whether you cast the spell. The DC equals 10 plus the spell's level. On a failed check, the spell disappears from the scroll with no other effect.&lt;br&gt;Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.&lt;br&gt;The level of the spell on the scroll determines the spell's saving throw DC and attack bonus, as well as the scroll's rarity, as shown in the following table.</content>
+  <content contentuid="h8b3c149deb70426aaab7c69fb113ae4e097g" version="1">A Wizard spell on a Spell Scroll can be copied into a spellbook. When a spell is copied in this way, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 plus the spell's level. On a successful check, the spell is copied. Whether the check succeeds or fails, the Spell Scroll is destroyed.</content>
+  <content contentuid="h7c8b0c313baf41c1b488c473919157236e55" version="1">Revivify scrolls override all settings, allowing them to be cast freely without checks, just like in vanilla.</content>
+  <content contentuid="hac4f35376e6f4ef0adff511a3c78a282g008" version="1">[5e] Revivify scrolls follow standard rules, requiring checks based on the current settings.</content>
+  <content contentuid="h459be7df43204f86a3d4313cd508ac9dffag" version="1">[5e] Scrolls are limited to classes that have the spell in their spell list.</content>
+  <content contentuid="he993a70f80c04649aa3e0aa11117984dff43" version="1">Scrolls can be cast by any character, regardless of class, bypassing spell list restrictions.</content>
+  <content contentuid="h704c3298d4a647c59b1d029782ec936fg602" version="1">[5e] Casting higher-level spells from scrolls requires making an ability check to determine success.</content>
+  <content contentuid="h012783d6453d498e86fa737ace95f36dee60" version="1">Spells from scrolls can be cast freely without an additional roll, regardless of their level.</content>
+  <content contentuid="h9e57fb03c42c496ab6a1f56e66d74e18893f" version="1">[5e] Wizards must succeed on an Intelligence (Arcana) check to copy a spell from a scroll into their spellbook.</content>
+  <content contentuid="h9d3583bdbf0a457784ec12e65b720c0b9c02" version="1">Wizards can copy spells from scrolls into their spellbooks without any additional checks.</content>
+  <content contentuid="h5dca14e9991a4162a9a20f88959281305g15" version="1">[5e] Attack roll spells use an attack bonus determined by the scroll's spell level.</content>
+  <content contentuid="h50759bb185a4401eb6cc165df8224038d0cg" version="1">Attack roll spells use the caster's attack bonuses.</content>
+  <content contentuid="h17e37f5372d64fa1a5a9d08f34b07ca729dd" version="1">[5e] Spells that require targets to roll a saving throw use a spell save DC determined the scroll's spell level.</content>
+  <content contentuid="h676f60f7bbf84f1b8250b5445b903286c302" version="1">Spells that require a saving throw use the caster's spell save DC.</content>
+  <content contentuid="h950ad5245cff41c1a0b7bd7f238540408630" version="1">Attack roll bonus when casting from a scroll will be increased or decreased depending on this setting.</content>
+  <content contentuid="h1a6dbfe1f384464a9fca19768b3825228220" version="1">DC for casting spells of a higher level than you can normally cast will be modified depending on this setting.</content>
+  <content contentuid="h20946e8a12364bba8f47d349f63c2e9eba7d" version="1">DC for scribing spells will be modified depending on this setting.</content>
+  <content contentuid="h13b9015031b64c73a5c1987bdaa69afde25c" version="1">Starting at level 13, Thief Rogue can cast a spell from any scroll due to their Use Magic Device ability.</content>
+  <content contentuid="h9b462b02200e4a0cbebf8580c7779ad80058" version="1">Thief Rogue cannot use spell scrolls even at level 13 or higher.</content>
+  <content contentuid="h82a471111f8b4349b044630478a07fea7303" version="1">Artificer can cast a spell from any scroll, but has to succeed on an ability check roll.</content>
+  <content contentuid="h2563fec1cac64bb395a0551f50fd8863235c" version="1">Artificer can cast a spell from any scroll without making a roll.</content>
+  <content contentuid="h97a8a75525e242bd8663f73483663ded7gf7" version="1">[5e] Number of levels you have in a class determines if you can use a scroll of a certain level without making an ability check.</content>
+  <content contentuid="h134681ce10ea4e6099bcef281b3439c335f9" version="1">Your highest spell slot determines whether you can cast a spell of a certain level from a scroll without making an ability check.</content>
+  <content contentuid="he5f57c741216430d8fdbcc8c73c317529104" version="1">Spell Scrolls</content>
+  <content contentuid="h2552ac3c2dac4746a87663306ea0c330efeg" version="1">Spell Level</content>
+  <content contentuid="h058910c9880e41e8986735962f86da00c18e" version="1">Rarity</content>
+  <content contentuid="hd9906feb1f6e4ca5b42e53c005afe9dcd820" version="1">Save DC</content>
+  <content contentuid="h796f794338994a93b3f8ce8b96a57cc2gf12" version="1">Attack Bonus</content>
+  <content contentuid="he9b69193ee264c218cc6a7d721c360baa604" version="1">Cantrip</content>
+  <content contentuid="h1539170d214c4de19ab54e9d403db641fdcg" version="1">Common</content>
+  <content contentuid="h7063ed7083d14ce6b123547ef55765fcb3c7" version="1">Uncommon</content>
+  <content contentuid="h1057830b9c334810ab985ea5a7c20afccb6e" version="1">Rare</content>
+  <content contentuid="h1f29940aeca84ef09960972db266006bef05" version="1">Very rare</content>
+  <content contentuid="h56b867221a564b79b89dc9a77b38d08d6178" version="1">Legendary</content>
+  <content contentuid="h56b1551eb2a84c9cbf4abffd1bc2d1704d26" version="1">Copying a Scroll</content>
+  <content contentuid="h5cf9bfbee34d47c4a4684c3100f0495fedbg" version="1">Revivify</content>
+  <content contentuid="h051bdf3407614a73952c401f8c81fb3b4e86" version="1">Override</content>
+  <content contentuid="ha9ec1b84a32e4dd6a7438c1be6383265beba" version="1">Class</content>
+  <content contentuid="h43924f67d13e4d4c9bfcf62d594627fba426" version="1">Casting Ability</content>
+  <content contentuid="hd4c230ce7dfb4777827d27b27cee7720a5a6" version="1">Casting</content>
+  <content contentuid="h84cba14e5d4343d6b6c9f6fda62594e49e5f" version="1">Ability Check</content>
+  <content contentuid="h30f60aee6de5463ebd1fd6538461bf8798c4" version="1">Difficulty Modifier</content>
+  <content contentuid="hfdb4918f61774e67b361dd2e278eba139308" version="1">Thief</content>
+  <content contentuid="h971b8f680ff54f5a962420038093c28cf9bg" version="1">Can Use Scrolls</content>
+  <content contentuid="hfd66978ab33544148480428a789d7f31cb4b" version="1">Spell List</content>
+  <content contentuid="ha24c068719144d768861ba289348f7295183" version="1">Restrictions</content>
+  <content contentuid="h25d20e37ecbd40218fb9f93435a17b11f2d5" version="1">Scribing</content>
+  <content contentuid="h89a4b304e005497b9cd12041bb091a7851ef" version="1">Artificer</content>
+  <content contentuid="h26b283e99919480b84cc1fe6992c9a0fb240" version="1">Static Spell</content>
+  <content contentuid="h51d49bc4070f41f2930a66697583efb9457a" version="1">Static</content>
+  <content contentuid="h7c306da6c66d477181168598daa6495391a2" version="1">Can only be changed in Global Settings.</content>
+  <content contentuid="h8a6962775ba44a10bfae3cd3b87edd43e80b" version="1">Additional</content>
+  <content contentuid="ha81b0ff13bbd406fba91d3d9352487922a6d" version="1">will use settings from this page when casting a spell from a scroll.</content>
+  <content contentuid="hd66e9fc2b8df483aa175dec57627b04bc1fe" version="1">will use Global settings when casting a spell from a scroll.</content>
+  <content contentuid="h46b16544ce394c00980c79a8e8987d436f98" version="1">Reset to 5e</content>
+  <content contentuid="he76d3246c42a4cf4bee9a171c20c1a5b671a" version="1">Reset</content>
+  <content contentuid="h8c09f4566bc54084abacf75b451bf0d3g911" version="1">to follow 5e Rules as Written.</content>
+  <content contentuid="h7c56dd86fbd34a2fbbdbfdc3cf5fac4dbbf3" version="1">Global</content>
+</contentList>
