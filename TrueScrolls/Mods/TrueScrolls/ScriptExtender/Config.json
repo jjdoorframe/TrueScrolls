@@ -1,6 +1,6 @@
 {
     "RequiredVersion": 20,
-    "ModTable": "TrueScrolls-3099abde-7bad-48a6-900d-3a3b67172ded",
+    "ModTable": "TrueScrolls_deffc003-29da-4d9e-8967-64f3dc4c1b32",
     "FeatureFlags": [
         "Lua"
     ]

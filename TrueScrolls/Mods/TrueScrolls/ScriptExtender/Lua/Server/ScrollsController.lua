@@ -699,7 +699,7 @@ function OnGameplayStarted(levelName)
             end
         end
     end
-
+    
     RecreateScrolls()
 end
 

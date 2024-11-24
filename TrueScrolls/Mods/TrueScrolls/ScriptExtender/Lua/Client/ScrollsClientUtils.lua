@@ -87,7 +87,7 @@ function LoadConfig()
         ModConfig = {}
     end
 
-    if modVars and modVars.ModConfig and modVars.ModConfig.Defaults ~= nil then
+    if modVars and modVars.ModConfig then
         ModConfig = modVars.ModConfig
     end
 
@@ -99,7 +99,6 @@ end
 function SaveConfig()
     if ModConfig then
         Ext.Vars.GetModVariables(ModuleUUID).ModConfig = ModConfig
-        Ext.Vars.SyncModVariables()
     end
 end
 

@@ -292,10 +292,10 @@ function GetSetting(owner, settingName)
     local config = Ext.Vars.GetModVariables(ModuleUUID).ModConfig
     local value = nil
 
-    if config then
+    if config ~= nil then
         if config[owner] and config[owner].OverrideGlobals == true and config[owner][settingName] ~= nil then
             value = config[owner][settingName]
-        elseif config.Global and config.Global[settingName] ~= nil then
+        elseif config.Global ~= nil and config.Global[settingName] ~= nil then
             value = config.Global[settingName]
         else
             value = config.Defaults[settingName]

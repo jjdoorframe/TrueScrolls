@@ -300,7 +300,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
         local overrideTrue = tabName .. " " .. GetString("OverrideTrue")
         local overrideFalse = tabName .. " " .. GetString("OverrideFalse")
         local overrideCheckbox = MakeCheckbox(overrideCheckboxRow, tabOwner, "OverrideGlobals")
-        local overrideTooltip =  overrideCheckbox:Tooltip():AddText(overrideCheckbox.Checked and overrideTrue or overrideFalse)
+        local overrideTooltip = overrideCheckbox:Tooltip():AddText(overrideCheckbox.Checked and overrideTrue or overrideFalse)
         local onChange = overrideCheckbox.OnChange
         overrideCheckbox.OnChange = function(c)
             if onChange then
@@ -381,7 +381,7 @@ local function MainTab(treeParent)
         CreateTopBar(globalTab, tabOwner, tabName)
         PopulateGenericTab(globalTab, tabOwner, tabName)
 
-        Ext.Net.PostMessageToServer("RequestPartyUpdate","")
+        Ext.Net.PostMessageToServer("RequestPartyUpdate", "")
     end
 end
 
@@ -429,6 +429,8 @@ Ext.RegisterNetListener("UpdatePartyMembers", function(call, payload)
             end
         end
     end
+
+    SaveConfig()
 end)
 
 Ext.Events.SessionLoaded:Subscribe(function()
@@ -439,10 +441,7 @@ Ext.Events.SessionLoaded:Subscribe(function()
     Log("SESSION LOADED - CLIENT")
 end)
 
-Ext.Events.StatsLoaded:Subscribe(function()
-
-    Log("STATS LOADED - CLIENT")
-end)
-
-Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "True Scrolls", MainTab)
-Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "5e Reference", ReferenceTab)
+if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
+    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "True Scrolls", MainTab)
+    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "5e Reference", ReferenceTab)
+end
