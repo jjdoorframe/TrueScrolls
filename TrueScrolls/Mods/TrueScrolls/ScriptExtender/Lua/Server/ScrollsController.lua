@@ -653,7 +653,7 @@ function RecreateScrolls()
             end
 
             if spellMatch ~= originatorMatch then
-                if entity.InventoryMember and entity.GameObjectVisual then
+                if entity.InventoryMember and entity.GameObjectVisual and entity.Uuid then
                     local inventory = entity.InventoryMember.Inventory
                     local itemTemplate = entity.GameObjectVisual.RootTemplateId
 
@@ -721,6 +721,7 @@ function ResetServerCharacter(owner)
 end
 
 function UpdatePartyMembers()
+    Ext.Vars.SyncModVariables()
     local host = GetGuid(Osi.GetHostCharacter())
     local partyMembers = GetPartyMembers()
 

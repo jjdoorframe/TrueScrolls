@@ -59,13 +59,8 @@ local stringTable = {
     Global = "h7c56dd86fbd34a2fbbdbfdc3cf5fac4dbbf3",
 }
 
-function InitializeClientTables()
-    if ModTabs == nil then
-        ModTabs = {}
-    end
-end
-
 function LoadConfig()
+    Ext.Vars.SyncModVariables()
     local modVars = Ext.Vars.GetModVariables(ModuleUUID)
     local defaults = {
         OverrideGlobals = false,
@@ -83,17 +78,13 @@ function LoadConfig()
         ClassCasting = true
     }
 
-    if ModConfig == nil then
+    if modVars and modVars.ModConfig then
+        ModConfig = modVars.ModConfig
+    else
         ModConfig = {}
     end
 
-    if modVars and modVars.ModConfig then
-        ModConfig = modVars.ModConfig
-    end
-
     ModConfig.Defaults = defaults
-
-    SaveConfig()
 end
 
 function SaveConfig()
@@ -268,10 +259,12 @@ function AlignCellTitle(treeParent, text1, text2)
     local cell = treeParent:AddCell()
     local textTitle1 = cell:AddSeparatorText(GetString(text1))
     textTitle1:SetStyle("SeparatorTextBorderSize", 0)
+    textTitle1:SetStyle("SeparatorTextPadding", 0)
 
     if text2 ~= nil then
         local textTitle2 = cell:AddSeparatorText(GetString(text2))
         textTitle2:SetStyle("SeparatorTextBorderSize", 0)
+        textTitle2:SetStyle("SeparatorTextPadding", 0)
     end
 end
 

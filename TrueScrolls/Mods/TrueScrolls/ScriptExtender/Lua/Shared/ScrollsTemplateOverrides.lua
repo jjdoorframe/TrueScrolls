@@ -47,13 +47,11 @@ function UpdateScrollSpells(clientSpells)
                             if spellsTrueScrolls[actionData.Spell] then
                                 actionData.Spell = spellsTrueScrolls[actionData.Spell]
                             end
-                        else
-                            if string.find(actionData.Spell, "TrueScrolls") then
-                                local spellStats = Ext.Stats.Get(actionData.Spell)
+                        elseif string.find(actionData.Spell, "TrueScrolls") then
+                            local spellStats = Ext.Stats.Get(actionData.Spell)
 
-                                if spellStats and spellStats.Using ~= nil then
-                                    actionData.Spell = spellStats.Using
-                                end
+                            if spellStats and spellStats.Using ~= nil then
+                                actionData.Spell = spellStats.Using
                             end
                         end
                     end

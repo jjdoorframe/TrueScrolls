@@ -84,7 +84,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     AlignCellTitle(nameRow1, "Casting", "AbilityCheck")
 
     local checkboxRow1 = leftTopTable:AddRow()
-    local rightTopTable
+    local rightTopTable = topRow:AddCell():AddTable("Table", 1)
 
     MakeCheckbox(checkboxRow1, tabOwner, "RevivifyScrollOverride", "RevivifyTrue", "RevivifyFalse")
     MakeCheckbox(checkboxRow1, tabOwner, "ClassCasting", "ClassCastingTrue", "ClassCastingFalse")
@@ -107,7 +107,6 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     end
 
     -- RIGHT TOP TABLE --
-    rightTopTable = topRow:AddCell():AddTable("Table", 1)
     MakeSlider(rightTopTable, tabOwner, "CastRollBonus", -10, 10, "Casting", "DifficultyModifier", "CastRollBonus")
 
     -- MIDDLE TABLE--
@@ -132,7 +131,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     AlignCellTitle(nameRow2, "SpellList", "Restrictions")
     AlignCellTitle(nameRow2, "Scribing", "AbilityCheck")
 
-    local rightMidTable
+    local rightMidTable = midRow:AddCell():AddTable("Table", 1)
 
     local checkboxRow2 = leftMidTable:AddRow()
     MakeCheckbox(checkboxRow2, tabOwner, "ThiefCanCast", "ThiefCanCastTrue", "ThiefCanCastFalse")
@@ -155,7 +154,6 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
         rightMidTable.Visible = false
     end
 
-    rightMidTable = midRow:AddCell():AddTable("Table", 1)
     MakeSlider(rightMidTable, tabOwner, "ScribeRollBonus", -10, 10, "Scribing", "DifficultyModifier", "ScribingRollBonus")
 
     -- BOTTOM TABLE--
@@ -181,7 +179,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     AlignCellTitle(nameRow3, "StaticSpell", "SaveDC")
     AlignCellTitle(nameRow3, "Static", "AttackBonus")
 
-    local rightBottomTable
+    local rightBottomTable = bottomRow:AddCell():AddTable("Table", 1)
 
     local checkboxRow3 = leftBottomTable:AddRow()
 
@@ -222,7 +220,6 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
         rightBottomTable.Visible = false
     end
 
-    rightBottomTable = bottomRow:AddCell():AddTable("Table", 1)
     MakeSlider(rightBottomTable, tabOwner, "StaticAttackRollBonus", -10, 10, "Additional", "AttackBonus", "AttackRollBonus")
 end
 
@@ -325,7 +322,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
     end
 
     -- RESET BUTTON --
-    local resetButton = controlRow:AddCell():AddButton("Reset5e")
+    local resetButton = controlRow:AddCell():AddButton(GetString("Reset5e"))
     resetButton:Tooltip():AddText("Reset " .. tabName .. " " .. GetString("Follow5e"))
     resetButton.Size = {200, 80}
     resetButton.OnClick = function()
@@ -340,7 +337,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
 
         Ext.Net.PostMessageToServer("RequestResetCharacter", Ext.Json.Stringify(tabOwner))
 
-        ModConfig[tabOwner] = {}
+        ModConfig[tabOwner] = ModConfig.Defaults
         ModConfig[tabOwner].OverrideGlobals = true
 
         SaveConfig()
@@ -366,8 +363,7 @@ local function MainTab(treeParent)
     local tabName = GetString("Global")
 
     if ModTabs[tabOwner] == nil then
-        ModTabs[tabOwner] = {}
-        ModTabs[tabOwner].Tab = treeParent
+        LoadConfig()
 
         if ModConfig[tabOwner] == nil then
             ModConfig[tabOwner] = {}
@@ -376,12 +372,15 @@ local function MainTab(treeParent)
         local mainTabBar = treeParent:AddTabBar("MainTabBar")
         local globalTab = mainTabBar:AddTabItem(tabOwner)
 
+        ModTabs[tabOwner] = {}
+        ModTabs[tabOwner].Tab = globalTab
+
         ModTabs.MainTab = mainTabBar
 
         CreateTopBar(globalTab, tabOwner, tabName)
         PopulateGenericTab(globalTab, tabOwner, tabName)
-
-        Ext.Net.PostMessageToServer("RequestPartyUpdate", "")
+    elseif ModTabs.Global ~= nil then
+        RecreateTab(ModTabs.Global.Tab, tabOwner, tabName)
     end
 end
 
@@ -402,13 +401,24 @@ Ext.RegisterNetListener("UpdatePartyMembers", function(call, payload)
         return
     end
 
+    for tabOwner, _ in pairs(ModTabs) do
+        if tabOwner ~= "Global" and tabOwner ~= "MainTab" then
+            if ModTabs and ModTabs[tabOwner] ~= nil and ModTabs[tabOwner].Tab ~= nil then
+                ModTabs[tabOwner].Tab:Destroy()
+                ModTabs[tabOwner] = nil
+            end
+        end
+    end
+
     for characterGuid, _ in pairs(partyMembers) do
         local characterName = GetDisplayName(characterGuid)
 
         if characterName then
             if ModTabs and ModTabs[characterGuid] == nil then
+                LoadConfig()
+
                 if ModConfig[characterGuid] == nil then
-                    ModConfig[characterGuid] = ModConfig.Defaults
+                    ModConfig[characterGuid] = {}
                 end
 
                 if ModTabs.MainTab ~= nil then
@@ -419,29 +429,21 @@ Ext.RegisterNetListener("UpdatePartyMembers", function(call, payload)
         end
     end
 
-    for tabOwner, _ in pairs(ModTabs) do
-        if tabOwner ~= "Global" and tabOwner ~= "MainTab" then
-            if partyMembers[tabOwner] == nil then
-                if ModTabs and ModTabs[tabOwner] ~= nil and ModTabs[tabOwner].Tab ~= nil then
-                    ModTabs[tabOwner].Tab:Destroy()
-                    ModTabs[tabOwner] = nil
-                end
-            end
-        end
+    if ModTabs.Global ~= nil then
+        RecreateTab(ModTabs.Global.Tab, "Global", GetString("Global"))
     end
-
-    SaveConfig()
 end)
 
 Ext.Events.SessionLoaded:Subscribe(function()
-    LoadConfig()
-    InitializeClientTables()
-
     UpdateScrollSpells()
     Log("SESSION LOADED - CLIENT")
 end)
 
 if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
+    if ModTabs == nil then
+        ModTabs = {}
+    end
+
     Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "True Scrolls", MainTab)
     Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "5e Reference", ReferenceTab)
 end

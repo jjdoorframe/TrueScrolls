@@ -25,7 +25,10 @@ end)
 
 Ext.Osiris.RegisterListener("GainedControl", 1, "after", function(characterGuid)
     AddCharacterLearnedSpells(characterGuid)
-    UpdatePartyMembers()
+
+    if DebuggingEnabled == true then
+        UpdatePartyMembers()
+    end
 end)
 
 function RegisterEntityListeners()
@@ -48,11 +51,11 @@ Ext.RegisterNetListener("SpellSaveSettingChanged", function(call, payload)
     SetTimer(100, UpdateScrollSpells, clientSpells)
 end)
 
-Ext.RegisterNetListener("RequestPartyUpdate", function (call, payload)
+Ext.RegisterNetListener("RequestPartyUpdate", function(call, payload)
     UpdatePartyMembers()
 end)
 
-Ext.RegisterNetListener("RequestResetCharacter", function (call, payload)
+Ext.RegisterNetListener("RequestResetCharacter", function(call, payload)
     local owner = Ext.Json.Parse(payload)
     ResetServerCharacter(owner)
 end)
