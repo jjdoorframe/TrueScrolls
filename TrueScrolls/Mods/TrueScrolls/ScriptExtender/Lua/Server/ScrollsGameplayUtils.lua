@@ -289,6 +289,15 @@ function GetTrueSpell(spellId)
 end
 
 function GetSetting(owner, settingName)
+    if BackupConfig == nil then
+        LoadBackupConfig()
+    end
+
+    if BackupConfig.OverrideGlobals == true then
+        return BackupConfig[settingName]
+    end
+
+    Ext.Vars.SyncModVariables()
     local config = Ext.Vars.GetModVariables(ModuleUUID).ModConfig
     local value = nil
 
@@ -297,9 +306,11 @@ function GetSetting(owner, settingName)
             value = config[owner][settingName]
         elseif config.Global ~= nil and config.Global[settingName] ~= nil then
             value = config.Global[settingName]
-        else
-            value = config.Defaults[settingName]
         end
+    end
+
+    if value == nil then
+        value = ConfigDefaults[settingName]
     end
 
     return value

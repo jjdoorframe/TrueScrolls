@@ -19,7 +19,7 @@
   <content contentuid="h676f60f7bbf84f1b8250b5445b903286c302" version="1">Spells that require a saving throw use the caster's spell save DC.</content>
   <content contentuid="h950ad5245cff41c1a0b7bd7f238540408630" version="1">Attack roll bonus when casting from a scroll will be increased or decreased depending on this setting.</content>
   <content contentuid="h1a6dbfe1f384464a9fca19768b3825228220" version="1">DC for casting spells of a higher level than you can normally cast will be modified depending on this setting.</content>
-  <content contentuid="h20946e8a12364bba8f47d349f63c2e9eba7d" version="1">DC for scribing spells will be modified depending on this setting.</content>
+  <content contentuid="h20946e8a12364bba8f47d349f63c2e9eba7d" version="1">DC for copying spells will be modified depending on this setting.</content>
   <content contentuid="h13b9015031b64c73a5c1987bdaa69afde25c" version="1">Starting at level 13, Thief Rogue can cast a spell from any scroll due to their Use Magic Device ability.</content>
   <content contentuid="h9b462b02200e4a0cbebf8580c7779ad80058" version="1">Thief Rogue cannot use spell scrolls even at level 13 or higher.</content>
   <content contentuid="h82a471111f8b4349b044630478a07fea7303" version="1">Artificer can cast a spell from any scroll, but has to succeed on an ability check roll.</content>
@@ -49,7 +49,7 @@
   <content contentuid="h971b8f680ff54f5a962420038093c28cf9bg" version="1">Can Use Scrolls</content>
   <content contentuid="hfd66978ab33544148480428a789d7f31cb4b" version="1">Spell List</content>
   <content contentuid="ha24c068719144d768861ba289348f7295183" version="1">Restrictions</content>
-  <content contentuid="h25d20e37ecbd40218fb9f93435a17b11f2d5" version="1">Scribing</content>
+  <content contentuid="h25d20e37ecbd40218fb9f93435a17b11f2d5" version="1">Copying</content>
   <content contentuid="h89a4b304e005497b9cd12041bb091a7851ef" version="1">Artificer</content>
   <content contentuid="h26b283e99919480b84cc1fe6992c9a0fb240" version="1">Static Spell</content>
   <content contentuid="h51d49bc4070f41f2930a66697583efb9457a" version="1">Static</content>
@@ -61,4 +61,9 @@
   <content contentuid="he76d3246c42a4cf4bee9a171c20c1a5b671a" version="1">Reset</content>
   <content contentuid="h8c09f4566bc54084abacf75b451bf0d3g911" version="1">to follow 5e Rules as Written.</content>
   <content contentuid="h7c56dd86fbd34a2fbbdbfdc3cf5fac4dbbf3" version="1">Global</content>
+  <content contentuid="hfc6b180862444e4cabf3013ee8c2293b5723" version="1">Require</content>
+  <content contentuid="h5346f073925d4bb193d054a413414be2e4f2" version="1">Wizard Levels</content>
+  <content contentuid="h3b3b18f7e2b74e2d984740657fb8b1ec223g" version="1">[5e] Copying a spell from a scroll requires having enough wizard levels to cast it.</content>
+  <content contentuid="h9b9dfe01c9444ae99177f32946ed2c9917d0" version="1">Copying a spell from a scroll requires having a spell slot of the same or a higher level than the spell.</content>
+    <content contentuid="ha2b3d9b7fae844b4900f0c7b3784e751f2a4" version="1">Wizard level is too low!</content>
 </contentList>

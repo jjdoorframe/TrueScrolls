@@ -40,7 +40,7 @@ local function ReferenceTab(treeParent)
 
     MakeTableTitle(mainCell, GetString("CopyingAScroll"))
 
-    mainCell:AddText(WrapText("RefScribeText", 95))
+    mainCell:AddText(WrapText("RefCopyText", 95))
 end
 
 local function PopulateGenericTab(treeParent, tabOwner, tabName)
@@ -59,32 +59,32 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     }
     contentTable:SetStyle("CellPadding", 0)
 
-    -- TOP TABLE--
-    local topTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    topTable.BordersInnerV = true
-    topTable.ColumnDefs[1] = {
+    -- FIRST TABLE--
+    local firstTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
+    firstTable.BordersInnerV = true
+    firstTable.ColumnDefs[1] = {
         Width = 714,
         WidthFixed = true
     }
 
-    local topRow = topTable:AddRow()
+    local firstRow = firstTable:AddRow()
 
-    -- LEFT TOP TABLE --
-    local leftTopTable = topRow:AddCell():AddTable("LeftTopTable", 3)
-    leftTopTable.BordersInnerV = true
-    leftTopTable.RowBg = true
-    leftTopTable:SetStyle("CellPadding", 10)
-    leftTopTable.Size = {714, 150}
+    -- LEFT FIRST TABLE --
+    local leftFirstTable = firstRow:AddCell():AddTable("LeftTopTable", 3)
+    leftFirstTable.BordersInnerV = true
+    leftFirstTable.RowBg = true
+    leftFirstTable:SetStyle("CellPadding", 10)
+    leftFirstTable.Size = {714, 150}
 
-    local nameRow1 = leftTopTable:AddRow()
+    local nameRow1 = leftFirstTable:AddRow()
     nameRow1.Headers = true
 
     AlignCellTitle(nameRow1, "Revivify", "Override")
     AlignCellTitle(nameRow1, "Class", "CastingAbility")
     AlignCellTitle(nameRow1, "Casting", "AbilityCheck")
 
-    local checkboxRow1 = leftTopTable:AddRow()
-    local rightTopTable = topRow:AddCell():AddTable("Table", 1)
+    local checkboxRow1 = leftFirstTable:AddRow()
+    local rightfirstTable = firstRow:AddCell():AddTable("Table", 1)
 
     MakeCheckbox(checkboxRow1, tabOwner, "RevivifyScrollOverride", "RevivifyTrue", "RevivifyFalse")
     MakeCheckbox(checkboxRow1, tabOwner, "ClassCasting", "ClassCastingTrue", "ClassCastingFalse")
@@ -96,92 +96,92 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
         end
 
         if c.Checked == true then
-            rightTopTable.Visible = true
+            rightfirstTable.Visible = true
         else
-            rightTopTable.Visible = false
+            rightfirstTable.Visible = false
         end
     end
 
     if castRollCheckbox.Checked == false then
-        rightTopTable.Visible = false
+        rightfirstTable.Visible = false
     end
 
-    -- RIGHT TOP TABLE --
-    MakeSlider(rightTopTable, tabOwner, "CastRollBonus", -10, 10, "Casting", "DifficultyModifier", "CastRollBonus")
+    -- RIGHT FIRST TABLE --
+    MakeSlider(rightfirstTable, tabOwner, "CastRollBonus", -10, 10, "Casting", "DifficultyModifier", "CastRollBonus")
 
-    -- MIDDLE TABLE--
-    local midTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    midTable.BordersInnerV = true
-    midTable.ColumnDefs[1] = {
+    -- SECOND TABLE TABLE--
+    local secondTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
+    secondTable.BordersInnerV = true
+    secondTable.ColumnDefs[1] = {
         Width = 714,
         WidthFixed = true
     }
-    local midRow = midTable:AddRow()
+    local secondRow = secondTable:AddRow()
 
-    -- LEFT MIDDLE TABLE -- 
-    local leftMidTable = midRow:AddCell():AddTable("LeftMidTable", 3)
-    leftMidTable.BordersInnerV = true
-    leftMidTable.RowBg = true
-    leftMidTable:SetStyle("CellPadding", 10)
-    leftMidTable.Size = {714, 150}
+    -- LEFT SECOND TABLE -- 
+    local leftSecondTable = secondRow:AddCell():AddTable("LeftMidTable", 3)
+    leftSecondTable.BordersInnerV = true
+    leftSecondTable.RowBg = true
+    leftSecondTable:SetStyle("CellPadding", 10)
+    leftSecondTable.Size = {714, 150}
 
-    local nameRow2 = leftMidTable:AddRow()
+    local nameRow2 = leftSecondTable:AddRow()
     nameRow2.Headers = true
     AlignCellTitle(nameRow2, "Thief", "CanUseScrolls")
     AlignCellTitle(nameRow2, "SpellList", "Restrictions")
-    AlignCellTitle(nameRow2, "Scribing", "AbilityCheck")
+    AlignCellTitle(nameRow2, "Copying", "AbilityCheck")
 
-    local rightMidTable = midRow:AddCell():AddTable("Table", 1)
+    local rightSecondTable = secondRow:AddCell():AddTable("Table", 1)
 
-    local checkboxRow2 = leftMidTable:AddRow()
+    local checkboxRow2 = leftSecondTable:AddRow()
     MakeCheckbox(checkboxRow2, tabOwner, "ThiefCanCast", "ThiefCanCastTrue", "ThiefCanCastFalse")
     MakeCheckbox(checkboxRow2, tabOwner, "ClassRestriction", "ClassRestrictionTrue", "ClassRestrictionFalse")
-    local scribeRollCheckbox = MakeCheckbox(checkboxRow2, tabOwner, "ScribeRoll", "ScribingRollTrue", "ScribingRollFalse")
-    local scribeRollOnChange = scribeRollCheckbox.OnChange
-    scribeRollCheckbox.OnChange = function(c)
-        if scribeRollOnChange then
-            scribeRollOnChange(c)
+    local copyRollCheckbox = MakeCheckbox(checkboxRow2, tabOwner, "ScribeRoll", "CopyingRollTrue", "CopyingRollFalse")
+    local copyRollOnChange = copyRollCheckbox.OnChange
+    copyRollCheckbox.OnChange = function(c)
+        if copyRollOnChange then
+            copyRollOnChange(c)
         end
 
         if c.Checked == true then
-            rightMidTable.Visible = true
+            rightSecondTable.Visible = true
         else
-            rightMidTable.Visible = false
+            rightSecondTable.Visible = false
         end
     end
 
-    if scribeRollCheckbox.Checked == false then
-        rightMidTable.Visible = false
+    if copyRollCheckbox.Checked == false then
+        rightSecondTable.Visible = false
     end
 
-    MakeSlider(rightMidTable, tabOwner, "ScribeRollBonus", -10, 10, "Scribing", "DifficultyModifier", "ScribingRollBonus")
+    MakeSlider(rightSecondTable, tabOwner, "CopyRollBonus", -10, 10, "Copying", "DifficultyModifier", "CopyingRollBonus")
 
-    -- BOTTOM TABLE--
-    local bottomTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    bottomTable.BordersInnerV = true
-    bottomTable.ColumnDefs[1] = {
+    -- THIRD TABLE--
+    local thirdTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
+    thirdTable.BordersInnerV = true
+    thirdTable.ColumnDefs[1] = {
         Width = 714,
         WidthFixed = true
     }
-    local bottomRow = bottomTable:AddRow()
+    local thirdRow = thirdTable:AddRow()
 
-    -- LEFT BOTTOM TABLE -- 
-    local leftBottomTable = bottomRow:AddCell():AddTable("LeftMidTable", 3)
-    leftBottomTable.BordersInnerV = true
-    leftBottomTable.RowBg = true
-    leftBottomTable:SetStyle("CellPadding", 10)
-    leftBottomTable.Size = {714, 150}
+    -- LEFT THIRD TABLE -- 
+    local leftThirdTable = thirdRow:AddCell():AddTable("LeftMidTable", 3)
+    leftThirdTable.BordersInnerV = true
+    leftThirdTable.RowBg = true
+    leftThirdTable:SetStyle("CellPadding", 10)
+    leftThirdTable.Size = {714, 150}
 
-    local nameRow3 = leftBottomTable:AddRow()
+    local nameRow3 = leftThirdTable:AddRow()
     nameRow3.Headers = true
 
     AlignCellTitle(nameRow3, "Artificer", "AbilityCheck")
     AlignCellTitle(nameRow3, "StaticSpell", "SaveDC")
     AlignCellTitle(nameRow3, "Static", "AttackBonus")
 
-    local rightBottomTable = bottomRow:AddCell():AddTable("Table", 1)
+    local rightThirdTable = thirdRow:AddCell():AddTable("Table", 1)
 
-    local checkboxRow3 = leftBottomTable:AddRow()
+    local checkboxRow3 = leftThirdTable:AddRow()
 
     MakeCheckbox(checkboxRow3, tabOwner, "ArtificerRequireRoll", "ArtificerRollTrue", "ArtificerRollFalse")
     local spellSaveCheckbox = MakeCheckbox(checkboxRow3, tabOwner, "StaticSpellSaveDC", "StaticSaveDCTrue", "StaticSaveDCFalse")
@@ -210,17 +210,43 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
         end
 
         if attackRollCheckbox.Checked then
-            rightBottomTable.Visible = true
+            rightThirdTable.Visible = true
         else
-            rightBottomTable.Visible = false
+            rightThirdTable.Visible = false
         end
     end
 
     if attackRollCheckbox.Checked == false then
-        rightBottomTable.Visible = false
+        rightThirdTable.Visible = false
     end
 
-    MakeSlider(rightBottomTable, tabOwner, "StaticAttackRollBonus", -10, 10, "Additional", "AttackBonus", "AttackRollBonus")
+    MakeSlider(rightThirdTable, tabOwner, "StaticAttackRollBonus", -10, 10, "Additional", "AttackBonus", "AttackRollBonus")
+
+    -- FOURTH TABLE--
+    local fourthTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
+    fourthTable.BordersInnerV = true
+    fourthTable.ColumnDefs[1] = {
+        Width = 238,
+        WidthFixed = true
+    }
+
+    local fourthRow = fourthTable:AddRow()
+
+    -- LEFT FOURTH TABLE --
+    local leftFourthTable = fourthRow:AddCell():AddTable("LeftFourthTable", 1)
+    leftFourthTable.BordersInnerV = true
+    leftFourthTable.RowBg = true
+    leftFourthTable:SetStyle("CellPadding", 10)
+    leftFourthTable.Size = {238, 150}
+
+    local nameRow4 = leftFourthTable:AddRow()
+    nameRow4.Headers = true
+
+    AlignCellTitle(nameRow4, "Require", "WizardLevels")
+
+    local checkboxRow4 = leftFourthTable:AddRow()
+
+    MakeCheckbox(checkboxRow4, tabOwner, "RequireWizardLevels", "WizardLevelsTrue", "WizardLevelsFalse")
 end
 
 local function CreateTopBar(treeParent, tabOwner, tabName)
@@ -337,7 +363,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
 
         Ext.Net.PostMessageToServer("RequestResetCharacter", Ext.Json.Stringify(tabOwner))
 
-        ModConfig[tabOwner] = ModConfig.Defaults
+        ModConfig[tabOwner] = {}
         ModConfig[tabOwner].OverrideGlobals = true
 
         SaveConfig()
@@ -439,6 +465,11 @@ Ext.Events.SessionLoaded:Subscribe(function()
     Log("SESSION LOADED - CLIENT")
 end)
 
+Ext.Events.StatsLoaded:Subscribe(function()
+    LoadBackupConfig()
+    Log("STATS LOADED - CLIENT")
+end)
+
 if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
     if ModTabs == nil then
         ModTabs = {}
@@ -447,3 +478,5 @@ if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
     Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "True Scrolls", MainTab)
     Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "5e Reference", ReferenceTab)
 end
+
+

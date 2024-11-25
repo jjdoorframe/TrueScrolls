@@ -491,13 +491,28 @@ end
 local function TryLearnSpell(characterGuid, spellId)
     if characterGuid and spellId then
         local spellStats = Ext.Stats.Get(spellId)
+        local progression = GetCharacterProgression(characterGuid)
+        local wizardTable = "d18eda7e-4b7d-490d-9952-cd33a3c60479"
 
-        if spellStats then
+        if spellStats and progression and progression[wizardTable] then
             local spellLevel = spellStats.Level or 0
             local configValue = GetSetting(characterGuid, "ScribeRollBonus") or 0
             local scribeDC = math.clamp(spellLevel + configValue, -9, 20)
 
-            Osi.RequestPassiveRoll(characterGuid, characterGuid, "SkillCheck", "Arcana", scrollCastDC[spellLevel], 0, "TC_LearnScrollCheck")
+            if GetSetting(characterGuid, "RequireWizardLevels") == true then
+                local wizardLevel = progression[wizardTable].Level
+                local wizardSpellSlot = math.floor((wizardLevel + 1) / 2)
+
+                if wizardSpellSlot < spellLevel and ScrollLearning and ScrollLearning[characterGuid] then
+                    Log("Wizard level too low to copy %s", spellId)
+
+                    RemoveLearnedSpell(characterGuid, ScrollLearning[characterGuid][1])
+                    Osi.ApplyStatus(characterGuid, "TRUESCROLLS_WIZARDTOOLOW", 0, 1)
+                    return
+                end
+            end
+
+            Osi.RequestPassiveRoll(characterGuid, characterGuid, "SkillCheck", "Arcana", scrollCastDC[scribeDC], 0, "TC_LearnScrollCheck")
         end
     end
 end
@@ -733,6 +748,7 @@ end
 function OnSessionLoaded()
     InitializeGameplayTables()
     InitializeSpellLists()
+    LoadBackupConfig()
 
     Log("SESSION LOADED - SERVER")
 end

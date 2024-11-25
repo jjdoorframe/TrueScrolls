@@ -1,6 +1,23 @@
 -- Toggle debug across the mod
 DebuggingEnabled = false
 
+ConfigDefaults = {
+    OverrideGlobals = false,
+    RevivifyScrollOverride = false,
+    ClassRestriction = true,
+    CastRoll = true,
+    StaticAttackRoll = true,
+    StaticAttackRollBonus = 0,
+    StaticSpellSaveDC = true,
+    ScribeRoll = true,
+    ThiefCanCast = false,
+    ArtificerRequireRoll = false,
+    CastRollBonus = 0,
+    ScribeRollBonus = 0,
+    ClassCasting = true,
+    RequireWizardLevels = true
+}
+
 ---@param message string
 function Log(message, ...)
     if DebuggingEnabled then
@@ -85,4 +102,33 @@ function GetDisplayName(entityGuid)
     end
 
     return name
+end
+
+function SaveBackupConfig()
+    local newConfig = Ext.Json.Stringify(ConfigDefaults)
+
+    local saveStatus, saveErr = pcall(Ext.IO.SaveFile, "TrueScrolls/ModConfig.json", newConfig)
+    if not saveStatus then
+        Log("CONFIG: Failed to save config file")
+    else
+        LoadBackupConfig()
+        Log("CONFIG: Config file saved successfully")
+    end
+end
+
+function LoadBackupConfig()
+    BackupConfig = {}
+
+    local status, fileContent = pcall(Ext.IO.LoadFile, "TrueScrolls/ModConfig.json")
+    if not status or not fileContent then
+        Log("CONFIG: Couldn't load config. Creating new one")
+        SaveBackupConfig()
+    else
+        local parseStatus, result = pcall(Ext.Json.Parse, fileContent)
+        if not parseStatus then
+            Log("CONFIG: Failed to parse JSON")
+        else
+            BackupConfig = result
+        end
+    end
 end

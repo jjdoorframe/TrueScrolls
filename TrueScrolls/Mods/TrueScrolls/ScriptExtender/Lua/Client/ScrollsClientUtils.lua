@@ -1,21 +1,21 @@
 local stringTable = {
     RefMainText = "h1b7de7ffab3d4b31abff44128d29da568670",
-    RefScribeText = "h8b3c149deb70426aaab7c69fb113ae4e097g",
+    RefCopyText = "h8b3c149deb70426aaab7c69fb113ae4e097g",
     RevivifyTrue = "h7c8b0c313baf41c1b488c473919157236e55",
     RevivifyFalse = "hac4f35376e6f4ef0adff511a3c78a282g008",
     ClassRestrictionTrue = "h459be7df43204f86a3d4313cd508ac9dffag",
     ClassRestrictionFalse = "he993a70f80c04649aa3e0aa11117984dff43",
     CastingRollTrue = "h704c3298d4a647c59b1d029782ec936fg602",
     CastingRollFalse = "h012783d6453d498e86fa737ace95f36dee60",
-    ScribingRollTrue = "h9e57fb03c42c496ab6a1f56e66d74e18893f",
-    ScribingRollFalse = "h9d3583bdbf0a457784ec12e65b720c0b9c02",
+    CopyingRollTrue = "h9e57fb03c42c496ab6a1f56e66d74e18893f",
+    CopyingRollFalse = "h9d3583bdbf0a457784ec12e65b720c0b9c02",
     StaticAttackRollTrue = "h5dca14e9991a4162a9a20f88959281305g15",
     StaticAttackRollFalse = "h50759bb185a4401eb6cc165df8224038d0cg",
     StaticSaveDCTrue = "h17e37f5372d64fa1a5a9d08f34b07ca729dd",
     StaticSaveDCFalse = "h676f60f7bbf84f1b8250b5445b903286c302",
     AttackRollBonus = "h950ad5245cff41c1a0b7bd7f238540408630",
     CastRollBonus = "h1a6dbfe1f384464a9fca19768b3825228220",
-    ScribingRollBonus = "h20946e8a12364bba8f47d349f63c2e9eba7d",
+    CopyingRollBonus = "h20946e8a12364bba8f47d349f63c2e9eba7d",
     ThiefCanCastTrue = "h13b9015031b64c73a5c1987bdaa69afde25c",
     ThiefCanCastFalse = "h9b462b02200e4a0cbebf8580c7779ad80058",
     ArtificerRollTrue = "h82a471111f8b4349b044630478a07fea7303",
@@ -45,7 +45,7 @@ local stringTable = {
     CanUseScrolls = "h971b8f680ff54f5a962420038093c28cf9bg",
     SpellList = "hfd66978ab33544148480428a789d7f31cb4b",
     Restrictions = "ha24c068719144d768861ba289348f7295183",
-    Scribing = "h25d20e37ecbd40218fb9f93435a17b11f2d5",
+    Copying = "h25d20e37ecbd40218fb9f93435a17b11f2d5",
     Artificer = "h89a4b304e005497b9cd12041bb091a7851ef",
     StaticSpell = "h26b283e99919480b84cc1fe6992c9a0fb240",
     Static = "h51d49bc4070f41f2930a66697583efb9457a",
@@ -57,26 +57,15 @@ local stringTable = {
     Reset = "he76d3246c42a4cf4bee9a171c20c1a5b671a",
     Follow5e = "h8c09f4566bc54084abacf75b451bf0d3g911",
     Global = "h7c56dd86fbd34a2fbbdbfdc3cf5fac4dbbf3",
+    Require = "hfc6b180862444e4cabf3013ee8c2293b5723",
+    WizardLevels = "h5346f073925d4bb193d054a413414be2e4f2",
+    WizardLevelsTrue = "h3b3b18f7e2b74e2d984740657fb8b1ec223g",
+    WizardLevelsFalse = "h9b9dfe01c9444ae99177f32946ed2c9917d0"
 }
 
 function LoadConfig()
     Ext.Vars.SyncModVariables()
     local modVars = Ext.Vars.GetModVariables(ModuleUUID)
-    local defaults = {
-        OverrideGlobals = false,
-        RevivifyScrollOverride = false,
-        ClassRestriction = true,
-        CastRoll = true,
-        StaticAttackRoll = true,
-        StaticAttackRollBonus = 0,
-        StaticSpellSaveDC = true,
-        ScribeRoll = true,
-        ThiefCanCast = false,
-        ArtificerRequireRoll = false,
-        CastRollBonus = 0,
-        ScribeRollBonus = 0,
-        ClassCasting = true
-    }
 
     if modVars and modVars.ModConfig then
         ModConfig = modVars.ModConfig
@@ -84,7 +73,7 @@ function LoadConfig()
         ModConfig = {}
     end
 
-    ModConfig.Defaults = defaults
+    ModConfig.Defaults = ConfigDefaults
 end
 
 function SaveConfig()
@@ -109,10 +98,12 @@ function GetSetting(owner, settingName)
 end
 
 function SetSetting(tabOwner, settingName, state)
-    if ModConfig and ModConfig[tabOwner] ~= nil then
-        ModConfig[tabOwner][settingName] = state
-        SaveConfig()
+    if ModConfig[tabOwner] == nil then
+        ModConfig[tabOwner] = {}
     end
+
+    ModConfig[tabOwner][settingName] = state
+    SaveConfig()
 end
 
 function MakeCheckbox(treeParent, tabOwner, setting, tooltipTrue, tooltipFalse)
@@ -276,6 +267,7 @@ function MakeTableTitle(treeParent, text)
 
     local separatorText = treeParent:AddSeparatorText(text)
     separatorText:SetStyle("SeparatorTextBorderSize", 0)
+    separatorText:SetStyle("SeparatorTextPadding", 0)
 
     local separator2 = treeParent:AddSeparatorText(" ")
     separator2:SetStyle("SeparatorTextAlign", 1)
