@@ -278,3 +278,7 @@ end
 function GetString(key)
     return Ext.Loca.GetTranslatedString(stringTable[key]):gsub("<br>", "\n")
 end
+
+function Scale()
+    return Ext.IMGUI.GetViewportSize()[2] / 2160
+end

@@ -2,7 +2,7 @@ local function ReferenceTab(treeParent)
 
     local refTable = treeParent:AddTable("RefTable", 1)
     refTable.ColumnDefs[1] = {
-        Width = 1190,
+        Width = 1190 * Scale(),
         WidthFixed = true
     }
 
@@ -14,7 +14,7 @@ local function ReferenceTab(treeParent)
     mainCell:AddNewLine()
 
     local scrollTable = mainCell:AddTable("scrollTable", 4)
-    scrollTable.Size = {1190, 500}
+    scrollTable.Size = {1190 * Scale(), 500 * Scale()}
     scrollTable.RowBg = true
     scrollTable.BordersInnerV = true
     scrollTable.PadOuterX = true
@@ -54,7 +54,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     -- CONTENT TABLE --
     local contentTable = contentGroup:AddTable("GeneralTable", 1)
     contentTable.ColumnDefs[1] = {
-        Width = 1190,
+        Width = 1190 * Scale(),
         WidthFixed = true
     }
     contentTable:SetStyle("CellPadding", 0)
@@ -63,7 +63,11 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     local firstTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
     firstTable.BordersInnerV = true
     firstTable.ColumnDefs[1] = {
-        Width = 714,
+        Width = 714 * Scale(),
+        WidthFixed = true
+    }
+    firstTable.ColumnDefs[2] = {
+        Width = 476 * Scale(),
         WidthFixed = true
     }
 
@@ -71,10 +75,11 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
 
     -- LEFT FIRST TABLE --
     local leftFirstTable = firstRow:AddCell():AddTable("LeftTopTable", 3)
+    leftFirstTable.SizingStretchSame = true
     leftFirstTable.BordersInnerV = true
     leftFirstTable.RowBg = true
     leftFirstTable:SetStyle("CellPadding", 10)
-    leftFirstTable.Size = {714, 150}
+    leftFirstTable.Size = {714 * Scale(), 150 * Scale()}
 
     local nameRow1 = leftFirstTable:AddRow()
     nameRow1.Headers = true
@@ -85,6 +90,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
 
     local checkboxRow1 = leftFirstTable:AddRow()
     local rightfirstTable = firstRow:AddCell():AddTable("Table", 1)
+    rightfirstTable.SizingStretchProp = true
 
     MakeCheckbox(checkboxRow1, tabOwner, "RevivifyScrollOverride", "RevivifyTrue", "RevivifyFalse")
     MakeCheckbox(checkboxRow1, tabOwner, "ClassCasting", "ClassCastingTrue", "ClassCastingFalse")
@@ -113,17 +119,22 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     local secondTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
     secondTable.BordersInnerV = true
     secondTable.ColumnDefs[1] = {
-        Width = 714,
+        Width = 714 * Scale(),
+        WidthFixed = true
+    }
+    secondTable.ColumnDefs[2] = {
+        Width = 476 * Scale(),
         WidthFixed = true
     }
     local secondRow = secondTable:AddRow()
 
     -- LEFT SECOND TABLE -- 
     local leftSecondTable = secondRow:AddCell():AddTable("LeftMidTable", 3)
+    leftSecondTable.SizingStretchSame = true
     leftSecondTable.BordersInnerV = true
     leftSecondTable.RowBg = true
     leftSecondTable:SetStyle("CellPadding", 10)
-    leftSecondTable.Size = {714, 150}
+    leftSecondTable.Size = {714 * Scale(), 150 * Scale()}
 
     local nameRow2 = leftSecondTable:AddRow()
     nameRow2.Headers = true
@@ -132,6 +143,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     AlignCellTitle(nameRow2, "Copying", "AbilityCheck")
 
     local rightSecondTable = secondRow:AddCell():AddTable("Table", 1)
+    rightSecondTable.SizingStretchProp = true
 
     local checkboxRow2 = leftSecondTable:AddRow()
     MakeCheckbox(checkboxRow2, tabOwner, "ThiefCanCast", "ThiefCanCastTrue", "ThiefCanCastFalse")
@@ -160,7 +172,11 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     local thirdTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
     thirdTable.BordersInnerV = true
     thirdTable.ColumnDefs[1] = {
-        Width = 714,
+        Width = 714 * Scale(),
+        WidthFixed = true
+    }
+    thirdTable.ColumnDefs[2] = {
+        Width = 476 * Scale(),
         WidthFixed = true
     }
     local thirdRow = thirdTable:AddRow()
@@ -168,9 +184,10 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     -- LEFT THIRD TABLE -- 
     local leftThirdTable = thirdRow:AddCell():AddTable("LeftMidTable", 3)
     leftThirdTable.BordersInnerV = true
+    leftThirdTable.SizingStretchSame = true
     leftThirdTable.RowBg = true
     leftThirdTable:SetStyle("CellPadding", 10)
-    leftThirdTable.Size = {714, 150}
+    leftThirdTable.Size = {714 * Scale(), 150 * Scale()}
 
     local nameRow3 = leftThirdTable:AddRow()
     nameRow3.Headers = true
@@ -180,6 +197,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     AlignCellTitle(nameRow3, "Static", "AttackBonus")
 
     local rightThirdTable = thirdRow:AddCell():AddTable("Table", 1)
+    rightThirdTable.SizingStretchProp = true
 
     local checkboxRow3 = leftThirdTable:AddRow()
 
@@ -226,7 +244,7 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     local fourthTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
     fourthTable.BordersInnerV = true
     fourthTable.ColumnDefs[1] = {
-        Width = 238,
+        Width = 234 * Scale(),
         WidthFixed = true
     }
 
@@ -235,9 +253,10 @@ local function PopulateGenericTab(treeParent, tabOwner, tabName)
     -- LEFT FOURTH TABLE --
     local leftFourthTable = fourthRow:AddCell():AddTable("LeftFourthTable", 1)
     leftFourthTable.BordersInnerV = true
+    leftFourthTable.SizingStretchSame = true
     leftFourthTable.RowBg = true
     leftFourthTable:SetStyle("CellPadding", 10)
-    leftFourthTable.Size = {238, 150}
+    leftFourthTable.Size = {234 * Scale(), 150 * Scale()}
 
     local nameRow4 = leftFourthTable:AddRow()
     nameRow4.Headers = true
@@ -253,23 +272,23 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
     -- HEADER TABLE --
     local headerTable = treeParent:AddTable("Header", 1)
     headerTable.ColumnDefs[1] = {
-        Width = 1190,
+        Width = 1190 * Scale(),
         WidthFixed = true
     }
     headerTable:SetStyle("CellPadding", 0)
     MakeTableTitle(headerTable:AddRow():AddCell(), tabName)
 
     local controlTable = headerTable:AddRow():AddCell():AddTable("Control", 3)
-    controlTable.Size = {1190, 100}
+    controlTable.Size = {1190 * Scale(), 100 * Scale()}
     controlTable.ColumnDefs[1] = {
-        Width = 980,
+        Width = 980 * Scale(),
         WidthFixed = true
     }
     controlTable.ColumnDefs[2] = {
         WidthStretch = true
     }
     controlTable.ColumnDefs[3] = {
-        Width = 10,
+        Width = 10 * Scale(),
         WidthFixed = true
     }
 
@@ -280,11 +299,11 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
     if tabOwner ~= "Global" then
         local overrideTable = overrideCell:AddTable("OverrideTable", 2)
         overrideTable.ColumnDefs[1] = {
-            Width = 234,
+            Width = 234 * Scale(),
             WidthFixed = true
         }
         overrideTable.ColumnDefs[2] = {
-            Width = 244,
+            Width = 244 * Scale(),
             WidthFixed = true
         }
         overrideTable.PadOuterX = false
@@ -350,7 +369,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
     -- RESET BUTTON --
     local resetButton = controlRow:AddCell():AddButton(GetString("Reset5e"))
     resetButton:Tooltip():AddText("Reset " .. tabName .. " " .. GetString("Follow5e"))
-    resetButton.Size = {200, 80}
+    resetButton.Size = {200 * Scale(), 80 * Scale()}
     resetButton.OnClick = function()
         if tabOwner == "Global" then
             local spellSaveSetting = GetSetting(tabOwner, "StaticSpellSaveDC")
@@ -387,7 +406,7 @@ end
 local function MainTab(treeParent)
     local tabOwner = "Global"
     local tabName = GetString("Global")
-
+    
     if ModTabs[tabOwner] == nil then
         LoadConfig()
 
