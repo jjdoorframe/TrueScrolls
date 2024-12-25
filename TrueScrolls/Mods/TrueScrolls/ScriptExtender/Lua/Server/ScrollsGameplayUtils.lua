@@ -20,8 +20,21 @@ function InitializeGameplayTables()
     end
 end
 
+ScribingItemTypes = {
+    Scroll = {
+        Basic = "70df8a39-bf38-48bd-83a9-ae42116ca3ca"
+    },
+    Quill = {
+        Basic = "4e0647d7-baec-46c2-bca2-86596ecbf1ed"
+    },
+    Ink = {
+        Basic = "98f13cd0-0069-466f-bb6e-5b8964b46e66"
+    }
+}
+
 --- Get character classes, subclasses and spellcasting abilities
 ---@param characterGuid string
+---@return table | nil
 function GetCharacterProgression(characterGuid)
     local emptyClassGuid = "00000000-0000-0000-0000-000000000000"
     local character = Ext.Entity.Get(characterGuid)
@@ -78,6 +91,7 @@ end
 
 --- Get all character ability values
 ---@param characterGuid string
+---@return table | nil
 function GetCharacterAbilities(characterGuid)
     local character = Ext.Entity.Get(characterGuid)
     local abilities = nil
@@ -98,6 +112,9 @@ function GetCharacterAbilities(characterGuid)
     return abilities
 end
 
+--- Get highest spell slot level of a character
+--- @param characterGuid string
+--- @return integer
 function GetHighestSpellSlot(characterGuid)
     local spellSlotGuid = "d136c5d9-0ff0-43da-acce-a74a07f8d6bf"
     local character = Ext.Entity.Get(characterGuid)
@@ -105,7 +122,7 @@ function GetHighestSpellSlot(characterGuid)
 
     if character and character.ActionResources then
         local resources = character.ActionResources.Resources
-        
+
         for resourceGuid, resourceData in pairs(resources) do
             if resourceGuid == spellSlotGuid then
                 for _, spellSlot in ipairs(resourceData) do
@@ -124,6 +141,7 @@ end
 ---@param characterGuid string
 ---@param classesTable table
 ---@param spellId string
+---@return table
 function GetAbilityCheckData(characterGuid, classesTable, spellId)
     local thiefClassTable = "f6acc595-46b4-4d96-b7d5-6f33366fc2de"
     local artificerClassTable = "6b701f1f-c477-43f0-9afe-0e169f65fc7a"
@@ -196,13 +214,13 @@ function GetAbilityCheckData(characterGuid, classesTable, spellId)
             if GetSetting(characterGuid, "ArtificerRequireRoll") == false then
                 abilityData.SkipCheck = true
             end
-            
+
             if abilityData.BestAbility == nil then
                 abilityData.BestAbility = "Intelligence"
             end
         end
 
-        if abilityData.BestAbility == nil and (GetSetting(characterGuid, "ClassRestriction") == false or GetSetting(characterGuid, "ThiefCanCast") == true) then
+        if abilityData.BestAbility == nil and (GetSetting(characterGuid, "ClassRestriction") == false or (abilityData.IsThief == true and GetSetting(characterGuid, "ThiefCanCast") == true)) then
             abilityData.BestAbility = GetCharacterCastingAbility(characterGuid)
 
             if abilityData.BestAbility == "None" then
@@ -217,6 +235,7 @@ end
 
 --- Get casting ability that's used for roll bonuses
 ---@param characterGuid string
+---@return string | nil
 function GetCharacterCastingAbility(characterGuid)
     local character = Ext.Entity.Get(characterGuid)
     local castingAbility = nil
@@ -235,6 +254,7 @@ end
 
 --- Get character static attack roll bonus
 ---@param characterGuid string
+---@return integer | nil
 function GetCharacterRollBonus(characterGuid)
     local character = Ext.Entity.Get(characterGuid)
     local abilities = GetCharacterAbilities(characterGuid)
@@ -278,16 +298,8 @@ function CharacterHasStatus(characterGuid, statusIn)
     return false
 end
 
----@param spellId string
-function GetTrueSpell(spellId)
-    if string.find(spellId, "Scroll") then
-        local spellStat = Ext.Stats.Get(spellId)
-        return spellStat.Using
-    else
-        return spellId
-    end
-end
-
+---@param owner string
+---@param settingName string
 function GetSetting(owner, settingName)
     if BackupConfig == nil then
         LoadBackupConfig()
@@ -322,7 +334,7 @@ function GetPartyMembers()
 
     if party then
         for _, member in pairs(party) do
-            local characterGuid = GetGuid(member[1])
+            local characterGuid = GetGuid(tostring(member[1]))
             local character = Ext.Entity.Get(characterGuid)
 
             if character and character.IsSummon == nil then
@@ -334,6 +346,144 @@ function GetPartyMembers()
     return partyMembers
 end
 
+---@param value number
+---@param min number
+---@param max number
 function math.clamp(value, min, max)
     return math.max(min, math.min(value, max))
+end
+
+--- Get character spells and prepared spells
+---@param characterGuid string
+function GetCharacterSpells(characterGuid)
+    local character = Ext.Entity.Get(characterGuid)
+    local spells = {
+        SpellBook = {},
+        PreparedSpells = {}
+    }
+
+    if character and character.SpellBook and character.SpellBookPrepares and ScrollsList then
+        local spellPrepares = character.SpellBookPrepares.PreparedSpells
+        local spellBook = character.SpellBook.Spells
+
+        for _, spell in ipairs(spellBook) do
+            if spell and spell.Id then
+                local spellId = spell.Id.OriginatorPrototype
+
+                if ScrollsList[spellId] ~= nil then
+                    spells.SpellBook[spellId] = true
+                end
+            end
+        end
+
+        for _, spell in ipairs(spellPrepares) do
+            if spell and spell.OriginatorPrototype then
+                local spellId = spell.OriginatorPrototype
+
+                if ScrollsList[spellId] ~= nil then
+                    spells.PreparedSpells[spellId] = true
+                end
+            end
+        end
+
+        -- PreparedDisabled allows to scribe spells without preparing them
+        if GetSetting(characterGuid, "CraftingSpellPrepared") == "PreparedDisabled" then
+            spells.PreparedSpells = spells.SpellBook
+        end
+    end
+
+    return spells
+end
+
+---@param entityGuid string
+function GetTemplate(entityGuid)
+    local entity = Ext.Entity.Get(entityGuid)
+    local template = nil
+
+    if entity and entity.Template then
+        template = entity.Template.Id
+    end
+
+    return template
+end
+
+--- Check what scribing items character has in inventory
+---@param characterGuid? string
+function GetCharacterScribeItems(characterGuid)
+    local items = {
+        Scroll = {
+            Quality = "None",
+            Guid = nil
+        },
+        Quill = {
+            Quality = "None",
+            Guid = nil
+        },
+        Ink = {
+            Quality = "None",
+            Guid = nil
+        }
+    }
+
+    if characterGuid == nil then
+        return items
+    end
+
+    for type, itemList in pairs(ScribingItemTypes) do
+        for quality, templateId in pairs(itemList) do
+            if Osi.TemplateIsInInventory(templateId, characterGuid) > 0 then
+                if items[type].Quality == "None" or items[type].Quality == "Basic" then
+                    items[type].Quality = quality
+                    items[type].Guid = templateId
+                end
+            end
+        end
+    end
+
+    return items
+end
+
+---@param characterGuid string
+---@param status string
+---@param duration integer
+function ApplyNewStatus(characterGuid, status, duration)
+    Osi.ApplyStatus(characterGuid, status, duration, 1)
+end
+
+function LoadPersistence()
+    local modVars = Ext.Vars.GetModVariables(ModuleUUID)
+
+    if modVars then
+        if modVars.ActiveScribing then
+            ActiveScribing = modVars.ActiveScribing
+            Log("PERSISTENCE: Active scribing loaded")
+        else
+            ActiveScribing = {}
+            Log("PERSISTENCE: Initializing active scribing")
+        end
+    else
+        ActiveScribing = {}
+        Log("PERSISTENCE: Failed to load modvar")
+    end
+end
+
+---@param sendNotification? boolean
+---@param skipUpdate? boolean
+function SavePersistence(sendNotification, skipUpdate)
+    if ActiveScribing then
+        Ext.Vars.GetModVariables(ModuleUUID).ActiveScribing = ActiveScribing
+        Ext.Vars.SyncModVariables()
+
+        if skipUpdate ~= true then
+            SetTimer(50, UpdatePartyMembers)
+        end
+
+        if sendNotification == true then
+            Ext.Net.BroadcastMessage("TrueScrolls_ClientShowScribeWindow", "")
+        end
+
+        Log("PERSISTENCE: Active scribing saved")
+    else
+        Log("PERSISTENCE: Failed to save active scribing")
+    end
 end

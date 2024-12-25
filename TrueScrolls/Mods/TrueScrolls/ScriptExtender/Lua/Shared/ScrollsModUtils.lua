@@ -15,7 +15,43 @@ ConfigDefaults = {
     CastRollBonus = 0,
     ScribeRollBonus = 0,
     ClassCasting = true,
-    RequireWizardLevels = true
+    RequireWizardLevels = true,
+    CraftingTime = {
+        [0] = 1,
+        [1] = 1,
+        [2] = 3,
+        [3] = 5,
+        [4] = 10,
+        [5] = 20,
+        [6] = 40,
+        [7] = 80,
+        [8] = 160,
+        [9] = 240
+    },
+    CraftingCost = {
+        [0] = 15,
+        [1] = 25,
+        [2] = 250,
+        [3] = 500,
+        [4] = 2500,
+        [5] = 5000,
+        [6] = 15000,
+        [7] = 25000,
+        [8] = 50000,
+        [9] = 250000
+    },
+    CraftingRequireItems = false,
+    CraftingArcanaProficiency = true,
+    CraftingSharedGold = true,
+    CraftingQuillBreakChance = 0.25,
+    CraftingSpellPrepared = "PreparedLongRest",
+    WizardCopyCantrips = false,
+    CraftingRuleset = "RulesetHomebrew",
+    CraftingArcanaCheck = false,
+    CraftingCheckBonus = 0,
+    CraftingComplications = true,
+    CraftingComplicationChance = 0.1,
+    MajorVersion = 1
 }
 
 ---@param message string
@@ -30,17 +66,17 @@ end
 -- Only enabled with debugging
 function ReloadStats()
     if DebuggingEnabled then
-        local path = 'Public/TrueScrolls/Stats/Generated/Data/'
-        local stats = {'Status_BOOST.txt', 'TrueScrolls.txt'}
+        local path = "Public/TrueScrolls/Stats/Generated/Data/"
+        local stats = {"Status_BOOST.txt", "TrueScrolls.txt", "Object.txt"}
 
         for _, filename in pairs(stats) do
-            local filePath = string.format('%s%s', path, filename)
+            local filePath = string.format("%s%s", path, filename)
 
             if string.len(filename) > 0 then
-                Log('RELOADING %s', filePath)
+                Log("RELOADING %s", filePath)
                 Ext.Stats.LoadStatsFile(filePath, false)
             else
-                Log('Invalid file: %s', filePath)
+                Log("Invalid file: %s", filePath)
             end
         end
     end
@@ -70,6 +106,7 @@ function SetTimer(time, call, ...)
     return event
 end
 
+---@param osiGuid string
 function GetGuid(osiGuid)
     local entity = Ext.Entity.Get(osiGuid)
     local entityGuid = ""
@@ -81,6 +118,8 @@ function GetGuid(osiGuid)
     return entityGuid
 end
 
+---@param array table
+---@param search any
 function ArrayContains(array, search)
     for _, element in ipairs(array) do
         if element == search then
@@ -104,10 +143,54 @@ function GetDisplayName(entityGuid)
     return name
 end
 
+---@param spellId string
+function GetTrueSpell(spellId)
+    if string.find(spellId, "Scroll") then
+        local spellStat = Ext.Stats.Get(spellId)
+        return spellStat.Using
+    else
+        return spellId
+    end
+end
+
+---@param orig table | any
+function DeepCopy(orig)
+    local copy
+
+    if type(orig) == 'table' then
+        copy = {}
+
+        for key, value in pairs(orig) do
+            copy[key] = DeepCopy(value)
+        end
+    else
+        copy = orig
+    end
+
+    return copy
+end
+
+---@param tbl table
+function KeysToNumbers(tbl)
+    local normalizedTable = {}
+
+    for k, v in pairs(tbl) do
+        local numericKey = tonumber(k) or k
+
+        if type(v) == "table" then
+            normalizedTable[numericKey] = KeysToNumbers(v)
+        else
+            normalizedTable[numericKey] = v
+        end
+    end
+    
+    return normalizedTable
+end
+
 function SaveBackupConfig()
     local newConfig = Ext.Json.Stringify(ConfigDefaults)
 
-    local saveStatus, saveErr = pcall(Ext.IO.SaveFile, "TrueScrolls/ModConfig.json", newConfig)
+    local saveStatus = pcall(Ext.IO.SaveFile, "TrueScrolls/ModConfig.json", newConfig)
     if not saveStatus then
         Log("CONFIG: Failed to save config file")
     else
@@ -118,6 +201,7 @@ end
 
 function LoadBackupConfig()
     BackupConfig = {}
+    local cachedConfig = {}
 
     local status, fileContent = pcall(Ext.IO.LoadFile, "TrueScrolls/ModConfig.json")
     if not status or not fileContent then
@@ -128,7 +212,15 @@ function LoadBackupConfig()
         if not parseStatus then
             Log("CONFIG: Failed to parse JSON")
         else
-            BackupConfig = result
+            cachedConfig = result
         end
     end
+
+    for key, value in pairs(ConfigDefaults) do
+        if cachedConfig[key] == nil then
+            cachedConfig[key] = value
+        end
+    end
+
+    BackupConfig = cachedConfig
 end

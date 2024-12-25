@@ -1,0 +1,58 @@
+new treasuretable "Scribing_Basics"
+CanMerge 1
+new subtable "4,1;5,1;6,1"
+object category "I_OBJ_Feather",1,0,0,0,0,0,0,0
+new subtable "4,1;5,2;6,3;7,4;8,5;9,4;10,3;11,2;12,1"
+object category "I_OBJ_InkPot",1,0,0,0,0,0,0,0
+new subtable "4,1;5,1;6,1;7,1;8,1"
+object category "I_OBJ_EmptyScroll",1,0,0,0,0,0,0,0
+
+new treasuretable "DEN_Volo_Trade"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "UND_SocietyOfBrilliance_Hobgoblin"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "DEN_Entrance_Trade"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "UND_KC_Trader_Utility"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "LOW_SorcerousSundries_TolnaTomeMonger"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "GOB_ZhentQuarters"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "CRE_Expeditioner_Trade"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "UND_SocietyOfBrilliance_Mindflayer"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "MOO_InfernalTrader_Trade"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0
+
+new treasuretable "HAV_HarperQuarterMaster"
+CanMerge 1
+new subtable "1,1"
+object category "T_Scribing_Basics",1,0,0,0,0,0,0,0

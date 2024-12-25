@@ -1,3 +1,5 @@
+--- Create a 5e reference tab
+---@param treeParent ExtuiTreeParent
 local function ReferenceTab(treeParent)
 
     local refTable = treeParent:AddTable("RefTable", 1)
@@ -8,15 +10,14 @@ local function ReferenceTab(treeParent)
 
     local mainCell = refTable:AddRow():AddCell()
 
-    MakeTableTitle(mainCell, GetString("SpellScrolls"))
+    MakeTitle(mainCell, "SpellScrolls")
 
     mainCell:AddText(WrapText("RefMainText", 95))
     mainCell:AddNewLine()
 
     local scrollTable = mainCell:AddTable("scrollTable", 4)
     scrollTable.Size = {1190 * Scale(), 500 * Scale()}
-    scrollTable.RowBg = true
-    scrollTable.BordersInnerV = true
+    scrollTable.BordersInnerH = true
     scrollTable.PadOuterX = true
 
     local scrollHeader = scrollTable:AddRow()
@@ -27,285 +28,397 @@ local function ReferenceTab(treeParent)
     scrollHeader:AddCell():AddText(GetString("SaveDC"))
     scrollHeader:AddCell():AddText(GetString("AttackBonus"))
 
-    AddRefTableRow(scrollTable, GetString("Cantrip"), "Common", "13", "+5")
-    AddRefTableRow(scrollTable, "1st", "Common", "13", "+5")
-    AddRefTableRow(scrollTable, "2nd", "Uncommon", "13", "+5")
-    AddRefTableRow(scrollTable, "3rd", "Uncommon", "15", "+7")
-    AddRefTableRow(scrollTable, "4th", "Rare", "15", "+7")
-    AddRefTableRow(scrollTable, "5th", "Rare", "17", "+9")
-    AddRefTableRow(scrollTable, "6th", "VeryRare", "17", "+9")
-    AddRefTableRow(scrollTable, "7th", "VeryRare", "18", "+10")
-    AddRefTableRow(scrollTable, "8th", "VeryRare", "18", "+10")
-    AddRefTableRow(scrollTable, "9th", "Legendary", "19", "+11")
+    MakeRefTableRow(scrollTable, 0, "Common", "13", "+5")
+    MakeRefTableRow(scrollTable, 1, "Common", "13", "+5")
+    MakeRefTableRow(scrollTable, 2, "Uncommon", "13", "+5")
+    MakeRefTableRow(scrollTable, 3, "Uncommon", "15", "+7")
+    MakeRefTableRow(scrollTable, 4, "Rare", "15", "+7")
+    MakeRefTableRow(scrollTable, 5, "Rare", "17", "+9")
+    MakeRefTableRow(scrollTable, 6, "VeryRare", "17", "+9")
+    MakeRefTableRow(scrollTable, 7, "VeryRare", "18", "+10")
+    MakeRefTableRow(scrollTable, 8, "VeryRare", "18", "+10")
+    MakeRefTableRow(scrollTable, 9, "Legendary", "19", "+11")
 
-    MakeTableTitle(mainCell, GetString("CopyingAScroll"))
-
+    MakeTitle(mainCell, "CopyingAScroll")
     mainCell:AddText(WrapText("RefCopyText", 95))
+
+    MakeTitle(mainCell, "ScribingASpellScroll")
+    mainCell:AddText(WrapText("RefScribingText", 95))
+
+    local scribeTable = mainCell:AddTable("scrollTable", 4)
+    scribeTable.Size = {1190 * Scale(), 500 * Scale()}
+    scribeTable.BordersInnerH = true
+    scribeTable.PadOuterX = true
+
+    local scribeHeader = scribeTable:AddRow()
+    scribeHeader.Headers = true
+
+    scribeHeader:AddCell():AddText(GetString("SpellLevel"))
+    scribeHeader:AddCell():AddText(GetString("Time"))
+    scribeHeader:AddCell():AddText(GetString("Cost"))
+
+    MakeScribeRefTableRow(scribeTable, 0, 1, 15)
+    MakeScribeRefTableRow(scribeTable, 1, 1, 25)
+    MakeScribeRefTableRow(scribeTable, 2, 3, 250)
+    MakeScribeRefTableRow(scribeTable, 3, 5, 500)
+    MakeScribeRefTableRow(scribeTable, 4, 10, 2500)
+    MakeScribeRefTableRow(scribeTable, 5, 20, 5000)
+    MakeScribeRefTableRow(scribeTable, 6, 40, 15000)
+    MakeScribeRefTableRow(scribeTable, 7, 80, 25000)
+    MakeScribeRefTableRow(scribeTable, 8, 160, 50000)
+    MakeScribeRefTableRow(scribeTable, 9, 240, 250000)
 end
 
-local function PopulateGenericTab(treeParent, tabOwner, tabName)
-    -- CONTENT GROUP -- 
-    local contentGroup = treeParent:AddGroup("Content")
+--- Populate a character's settings tab
+---@param treeParent ExtuiTreeParent
+---@param tabOwner string
+---@param tabName string
+---@param characterData? table
+local function PopulateSettingsTab(treeParent, tabOwner, tabName, characterData)
+    local isThief = characterData and characterData.Thief ~= false
+    local isArtificer = characterData and characterData.Artificer ~= false
+    local isWizard = characterData and characterData.Wizard ~= false
+    local isGlobal = tabOwner == "Global"
+    local isProficient = isGlobal or ((characterData and characterData.Proficient ~= false) or GetSetting(tabOwner, "CraftingArcanaProficiency") == false)
 
-    if ModTabs and ModTabs[tabOwner] then
-        ModTabs[tabOwner].Content = contentGroup
+    ---Create all the settings automagically
+    ---@type SettingSection[]
+    local settingsConfig = {{
+        title = "CastingSettings",
+        items = {{
+            label1 = "Revivify",
+            label2 = "Override",
+            type = "checkbox",
+            setting = "RevivifyScrollOverride",
+            trueKey = "RevivifyTrue",
+            falseKey = "RevivifyFalse"
+        }, {
+            label1 = "Class",
+            label2 = "CastingAbility",
+            type = "checkbox",
+            setting = "ClassCasting",
+            trueKey = "ClassCastingTrue",
+            falseKey = "ClassCastingFalse"
+        }, {
+            label1 = "Casting",
+            label2 = "AbilityCheck",
+            type = "checkbox",
+            setting = "CastRoll",
+            trueKey = "CastingRollTrue",
+            falseKey = "CastingRollFalse",
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "Casting",
+            label2 = "DifficultyModifier",
+            type = "slider",
+            setting = "CastRollBonus",
+            min = -10,
+            max = 10,
+            condition = GetSetting(tabOwner, "CastRoll")
+        }, {
+            label1 = "SpellList",
+            label2 = "Restrictions",
+            type = "checkbox",
+            setting = "ClassRestriction",
+            trueKey = "ClassRestrictionTrue",
+            falseKey = "ClassRestrictionFalse"
+        }, {
+            label1 = "Static",
+            label2 = "AttackBonus",
+            type = "checkbox",
+            setting = "StaticAttackRoll",
+            trueKey = "StaticAttackRollTrue",
+            falseKey = "StaticAttackRollFalse",
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "Additional",
+            label2 = "AttackBonus",
+            type = "slider",
+            setting = "StaticAttackRollBonus",
+            min = -10,
+            max = 10,
+            condition = GetSetting(tabOwner, "StaticAttackRoll")
+        }, {
+            label1 = "Static Spell",
+            label2 = "SaveDC",
+            type = "checkbox",
+            setting = "StaticSpellSaveDC",
+            trueKey = "StaticSaveDCTrue",
+            falseKey = "StaticSaveDCFalse",
+            additionalLogic = UpdateScrollSpells,
+            condition = isGlobal
+        }, {
+            label1 = "Thief",
+            label2 = "CanUseScrolls",
+            type = "checkbox",
+            setting = "ThiefCanCast",
+            trueKey = "ThiefCanCastTrue",
+            falseKey = "ThiefCanCastFalse",
+            condition = isThief
+        }, {
+            label1 = "Artificer",
+            label2 = "RequireRoll",
+            type = "checkbox",
+            setting = "ArtificerRequireRoll",
+            trueKey = "ArtificerRollTrue",
+            falseKey = "ArtificerRollFalse",
+            condition = isArtificer
+        }}
+    }, {
+        title = "CopyingSettings",
+        condition = isWizard,
+        items = {{
+            label1 = "Require",
+            label2 = "WizardLevels",
+            type = "checkbox",
+            setting = "RequireWizardLevels",
+            trueKey = "WizardLevelsTrue",
+            falseKey = "WizardLevelsFalse"
+        }, {
+            label1 = "Copying",
+            label2 = "AbilityCheck",
+            type = "checkbox",
+            setting = "ScribeRoll",
+            trueKey = "CopyingRollTrue",
+            falseKey = "CopyingRollFalse",
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "Copying",
+            label2 = "DifficultyModifier",
+            type = "slider",
+            setting = "ScribeRollBonus",
+            min = -10,
+            max = 10,
+            condition = GetSetting(tabOwner, "ScribeRoll")
+        }, {
+            label1 = "Can Copy",
+            label2 = "Cantrips",
+            type = "checkbox",
+            setting = "WizardCopyCantrips",
+            trueKey = "WizardCopyCantripsTrue",
+            falseKey = "WizardCopyCantripsFalse",
+            additionalLogic = UpdateScrollSpells,
+            condition = isGlobal
+        }}
+    }, {
+        title = "ScribingSettings",
+        items = {{
+            label1 = "Require",
+            label2 = "ArcanaProficiency",
+            type = "checkbox",
+            setting = "CraftingArcanaProficiency",
+            trueKey = "CraftingArcanaProficiencyTrue",
+            falseKey = "CraftingArcanaProficiencyFalse",
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "Adjust",
+            label2 = "ScribingTime",
+            type = "levelTable",
+            setting = "CraftingTime",
+            text = "Set",
+            minimum = 1,
+            condition = isProficient
+        }, {
+            label1 = "Adjust",
+            label2 = "ScribingCost",
+            type = "levelTable",
+            setting = "CraftingCost",
+            text = "Set",
+            minimum = 0,
+            condition = isProficient
+        }, {
+            label1 = "Share",
+            label2 = "ScribingCost",
+            type = "checkbox",
+            setting = "CraftingSharedGold",
+            trueKey = "CraftingSharedGoldTrue",
+            falseKey = "CraftingSharedGoldFalse",
+            condition = isProficient,
+            additionalLogic = RequestRecalculateCost
+        }, {
+            label1 = "Downtime",
+            label2 = "ActivityRuleset",
+            type = "combo",
+            setting = "CraftingRuleset",
+            options = {"RulesetRAW", "RulesetSimplified", "RulesetHomebrew"},
+            condition = isProficient
+        }, {
+            label1 = "Require",
+            label2 = "PreparedSpell",
+            type = "combo",
+            setting = "CraftingSpellPrepared",
+            options = {"PreparedDisabled", "PreparedLongRest", "PreparedShortRest"},
+            condition = isProficient,
+            additionalLogic = RequestPartyUpdate
+        }, {
+            label1 = "Scribing",
+            label2 = "Complications",
+            type = "checkbox",
+            setting = "CraftingComplications",
+            trueKey = "CraftingComplicationsTrue",
+            falseKey = "CraftingComplicationsFalse",
+            condition = isProficient,
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "ChanceOf",
+            label2 = "Complications",
+            type = "slider",
+            setting = "CraftingComplicationChance",
+            min = 0,
+            max = 100,
+            buttonType = "Percent",
+            condition = isProficient and GetSetting(tabOwner, "CraftingComplications")
+        }, {
+            label1 = "Require",
+            label2 = "ScribingItems",
+            type = "checkbox",
+            setting = "CraftingRequireItems",
+            trueKey = "CraftingRequireItemsTrue",
+            falseKey = "CraftingRequireItemsFalse",
+            condition = isProficient,
+            additionalLogic = RequestRecalculateCost
+        }, {
+            label1 = "ChanceOf",
+            label2 = "QuillBreaking",
+            type = "slider",
+            setting = "CraftingQuillBreakChance",
+            min = 0,
+            max = 100,
+            buttonType = "Percent",
+            condition = isProficient and GetSetting(tabOwner, "CraftingRequireItems")
+        }, {
+            label1 = "Require",
+            label2 = "ArcanaCheck",
+            type = "checkbox",
+            setting = "CraftingArcanaCheck",
+            trueKey = "CraftingArcanaCheckTrue",
+            falseKey = "CraftingArcanaCheckFalse",
+            condition = isProficient,
+            additionalLogic = RefreshTabs
+        }, {
+            label1 = "Scribing",
+            label2 = "DifficultyModifier",
+            type = "slider",
+            setting = "CraftingCheckBonus",
+            min = -10,
+            max = 10,
+            condition = isProficient and GetSetting(tabOwner, "CraftingArcanaCheck")
+        }}
+    }}
+
+    local contentGroup = treeParent:AddGroup("Content")
+    if SettingTabs and SettingTabs[tabOwner] then
+        SettingTabs[tabOwner].Content = contentGroup
     end
 
-    -- CONTENT TABLE --
     local contentTable = contentGroup:AddTable("GeneralTable", 1)
-    contentTable.ColumnDefs[1] = {
-        Width = 1190 * Scale(),
-        WidthFixed = true
-    }
+    contentTable.SizingStretchProp = true
     contentTable:SetStyle("CellPadding", 0)
 
-    -- FIRST TABLE--
-    local firstTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    firstTable.BordersInnerV = true
-    firstTable.ColumnDefs[1] = {
-        Width = 714 * Scale(),
-        WidthFixed = true
-    }
-    firstTable.ColumnDefs[2] = {
-        Width = 476 * Scale(),
-        WidthFixed = true
-    }
+    for _, section in ipairs(settingsConfig) do
+        if section.condition == nil or section.condition == true then
+            MakeTitle(contentTable:AddRow():AddCell(), section.title)
 
-    local firstRow = firstTable:AddRow()
+            local nameRow
+            local settingsRow
+            local maxColumns = 4
+            local filteredItems = {}
 
-    -- LEFT FIRST TABLE --
-    local leftFirstTable = firstRow:AddCell():AddTable("LeftTopTable", 3)
-    leftFirstTable.SizingStretchSame = true
-    leftFirstTable.BordersInnerV = true
-    leftFirstTable.RowBg = true
-    leftFirstTable:SetStyle("CellPadding", 10)
-    leftFirstTable.Size = {714 * Scale(), 150 * Scale()}
+            -- Gather all items that should be displayed ahead of time to get their count
+            for _, element in ipairs(section.items) do
+                if element.condition == nil or element.condition == true then
+                    table.insert(filteredItems, element)
+                end
+            end
 
-    local nameRow1 = leftFirstTable:AddRow()
-    nameRow1.Headers = true
+            if #filteredItems > 0 then
+                local itemsNum = #filteredItems
+                local numRows = math.ceil(itemsNum / maxColumns)
 
-    AlignCellTitle(nameRow1, "Revivify", "Override")
-    AlignCellTitle(nameRow1, "Class", "CastingAbility")
-    AlignCellTitle(nameRow1, "Casting", "AbilityCheck")
+                -- Try to make the rows as even as possible by element count per row
+                local elementsPerRow = math.floor(itemsNum / numRows)
+                local extraElements = itemsNum % numRows
+                local currentIndex = 1
 
-    local checkboxRow1 = leftFirstTable:AddRow()
-    local rightfirstTable = firstRow:AddCell():AddTable("Table", 1)
-    rightfirstTable.SizingStretchProp = true
+                for row = 1, numRows do
+                    local columnNum = elementsPerRow
 
-    MakeCheckbox(checkboxRow1, tabOwner, "RevivifyScrollOverride", "RevivifyTrue", "RevivifyFalse")
-    MakeCheckbox(checkboxRow1, tabOwner, "ClassCasting", "ClassCastingTrue", "ClassCastingFalse")
-    local castRollCheckbox = MakeCheckbox(checkboxRow1, tabOwner, "CastRoll", "CastingRollTrue", "CastingRollFalse")
-    local castRollOnChange = castRollCheckbox.OnChange
-    castRollCheckbox.OnChange = function(c)
-        if castRollOnChange then
-            castRollOnChange(c)
-        end
+                    if row <= extraElements then
+                        columnNum = columnNum + 1
+                    end
 
-        if c.Checked == true then
-            rightfirstTable.Visible = true
-        else
-            rightfirstTable.Visible = false
-        end
-    end
+                    nameRow, settingsRow = MakeSettingsRow(contentTable, columnNum)
 
-    if castRollCheckbox.Checked == false then
-        rightfirstTable.Visible = false
-    end
+                    for col = 1, columnNum do
+                        if currentIndex <= itemsNum then
+                            local element = filteredItems[currentIndex]
+                            local elementRef
 
-    -- RIGHT FIRST TABLE --
-    MakeSlider(rightfirstTable, tabOwner, "CastRollBonus", -10, 10, "Casting", "DifficultyModifier", "CastRollBonus")
+                            MakeTextCentered(nameRow, element.label1, element.label2)
 
-    -- SECOND TABLE TABLE--
-    local secondTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    secondTable.BordersInnerV = true
-    secondTable.ColumnDefs[1] = {
-        Width = 714 * Scale(),
-        WidthFixed = true
-    }
-    secondTable.ColumnDefs[2] = {
-        Width = 476 * Scale(),
-        WidthFixed = true
-    }
-    local secondRow = secondTable:AddRow()
+                            if element.type == "checkbox" then
+                                elementRef = MakeCheckbox(settingsRow, tabOwner, element.setting, element.trueKey, element.falseKey)
+                            elseif element.type == "slider" then
+                                local popup, popupFunc = MakePopupButton(settingsRow, element.setting, GetSetting(tabOwner, element.setting), 100, element.buttonType)
+                                MakeSlider(popup, tabOwner, element.setting, element.min, element.max, element.setting, element.label1, element.label2, popupFunc)
+                            elseif element.type == "levelTable" then
+                                local popupContent = MakePopupButton(settingsRow, element.setting, element.text, 200, element.buttonType)
+                                MakeSpellLevelSetting(popupContent, tabOwner, tabName, element.setting, element.label1, element.label2, element.minimum)
+                            elseif element.type == "combo" then
+                                elementRef = MakeCombo(settingsRow, tabOwner, element.setting, element.options)
+                            end
 
-    -- LEFT SECOND TABLE -- 
-    local leftSecondTable = secondRow:AddCell():AddTable("LeftMidTable", 3)
-    leftSecondTable.SizingStretchSame = true
-    leftSecondTable.BordersInnerV = true
-    leftSecondTable.RowBg = true
-    leftSecondTable:SetStyle("CellPadding", 10)
-    leftSecondTable.Size = {714 * Scale(), 150 * Scale()}
+                            if elementRef and element.additionalLogic then
+                                local originalOnChange = elementRef.OnChange
+                                elementRef.OnChange = function(c)
+                                    if originalOnChange then
+                                        originalOnChange(c)
+                                    end
 
-    local nameRow2 = leftSecondTable:AddRow()
-    nameRow2.Headers = true
-    AlignCellTitle(nameRow2, "Thief", "CanUseScrolls")
-    AlignCellTitle(nameRow2, "SpellList", "Restrictions")
-    AlignCellTitle(nameRow2, "Copying", "AbilityCheck")
+                                    element.additionalLogic()
+                                end
+                            end
 
-    local rightSecondTable = secondRow:AddCell():AddTable("Table", 1)
-    rightSecondTable.SizingStretchProp = true
-
-    local checkboxRow2 = leftSecondTable:AddRow()
-    MakeCheckbox(checkboxRow2, tabOwner, "ThiefCanCast", "ThiefCanCastTrue", "ThiefCanCastFalse")
-    MakeCheckbox(checkboxRow2, tabOwner, "ClassRestriction", "ClassRestrictionTrue", "ClassRestrictionFalse")
-    local copyRollCheckbox = MakeCheckbox(checkboxRow2, tabOwner, "ScribeRoll", "CopyingRollTrue", "CopyingRollFalse")
-    local copyRollOnChange = copyRollCheckbox.OnChange
-    copyRollCheckbox.OnChange = function(c)
-        if copyRollOnChange then
-            copyRollOnChange(c)
-        end
-
-        if c.Checked == true then
-            rightSecondTable.Visible = true
-        else
-            rightSecondTable.Visible = false
+                            currentIndex = currentIndex + 1
+                        end
+                    end
+                end
+            end
         end
     end
+end
 
-    if copyRollCheckbox.Checked == false then
-        rightSecondTable.Visible = false
-    end
+--- Create top bar of the settings tab
+---@param treeParent ExtuiTreeParent
+---@param tabOwner string
+---@param tabName string
+---@param characterData? table
+local function CreateSettingsTopBar(treeParent, tabOwner, tabName, characterData)
+    -- HEADER TABLE --
+    local headerTable = treeParent:AddTable("Header", 2)
+    headerTable.SizingStretchSame = true
+    headerTable:SetStyle("CellPadding", 0)
+    local controlRow = headerTable:AddRow()
 
-    MakeSlider(rightSecondTable, tabOwner, "CopyRollBonus", -10, 10, "Copying", "DifficultyModifier", "CopyingRollBonus")
+    local resetButton = MakeConfirmationButton(controlRow:AddCell(), GetString("Reset5e"), 300, 80)
+    resetButton(function()
+        Ext.Net.PostMessageToServer("TrueScrolls_RequestResetCharacter", tabOwner)
 
-    -- THIRD TABLE--
-    local thirdTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    thirdTable.BordersInnerV = true
-    thirdTable.ColumnDefs[1] = {
-        Width = 714 * Scale(),
-        WidthFixed = true
-    }
-    thirdTable.ColumnDefs[2] = {
-        Width = 476 * Scale(),
-        WidthFixed = true
-    }
-    local thirdRow = thirdTable:AddRow()
+        ModConfig[tabOwner] = ConfigDefaults
+        ModConfig[tabOwner].OverrideGlobals = true
 
-    -- LEFT THIRD TABLE -- 
-    local leftThirdTable = thirdRow:AddCell():AddTable("LeftMidTable", 3)
-    leftThirdTable.BordersInnerV = true
-    leftThirdTable.SizingStretchSame = true
-    leftThirdTable.RowBg = true
-    leftThirdTable:SetStyle("CellPadding", 10)
-    leftThirdTable.Size = {714 * Scale(), 150 * Scale()}
-
-    local nameRow3 = leftThirdTable:AddRow()
-    nameRow3.Headers = true
-
-    AlignCellTitle(nameRow3, "Artificer", "AbilityCheck")
-    AlignCellTitle(nameRow3, "StaticSpell", "SaveDC")
-    AlignCellTitle(nameRow3, "Static", "AttackBonus")
-
-    local rightThirdTable = thirdRow:AddCell():AddTable("Table", 1)
-    rightThirdTable.SizingStretchProp = true
-
-    local checkboxRow3 = leftThirdTable:AddRow()
-
-    MakeCheckbox(checkboxRow3, tabOwner, "ArtificerRequireRoll", "ArtificerRollTrue", "ArtificerRollFalse")
-    local spellSaveCheckbox = MakeCheckbox(checkboxRow3, tabOwner, "StaticSpellSaveDC", "StaticSaveDCTrue", "StaticSaveDCFalse")
-    local spellSaveOnChange = spellSaveCheckbox.OnChange
-    spellSaveCheckbox.OnChange = function(c)
-        if spellSaveOnChange then
-            spellSaveOnChange(c)
-        end
+        SaveConfig()
+        SetTimer(10, RefreshTabs)
 
         if tabOwner == "Global" then
             UpdateScrollSpells()
         end
-    end
-
-    if tabOwner ~= "Global" then
-        spellSaveCheckbox.Disabled = true
-        spellSaveCheckbox.Checked = GetSetting("Global", "StaticSpellSaveDC")
-        spellSaveCheckbox:Tooltip():AddText(GetString("OnlyInGlobal"))
-    end
-
-    local attackRollCheckbox = MakeCheckbox(checkboxRow3, tabOwner, "StaticAttackRoll", "StaticAttackRollTrue", "StaticAttackRollFalse")
-    local attackRollOnChange = attackRollCheckbox.OnChange
-    attackRollCheckbox.OnChange = function(c)
-        if attackRollOnChange then
-            attackRollOnChange(c)
-        end
-
-        if attackRollCheckbox.Checked then
-            rightThirdTable.Visible = true
-        else
-            rightThirdTable.Visible = false
-        end
-    end
-
-    if attackRollCheckbox.Checked == false then
-        rightThirdTable.Visible = false
-    end
-
-    MakeSlider(rightThirdTable, tabOwner, "StaticAttackRollBonus", -10, 10, "Additional", "AttackBonus", "AttackRollBonus")
-
-    -- FOURTH TABLE--
-    local fourthTable = contentTable:AddRow():AddCell():AddTable("TopTable", 2)
-    fourthTable.BordersInnerV = true
-    fourthTable.ColumnDefs[1] = {
-        Width = 234 * Scale(),
-        WidthFixed = true
-    }
-
-    local fourthRow = fourthTable:AddRow()
-
-    -- LEFT FOURTH TABLE --
-    local leftFourthTable = fourthRow:AddCell():AddTable("LeftFourthTable", 1)
-    leftFourthTable.BordersInnerV = true
-    leftFourthTable.SizingStretchSame = true
-    leftFourthTable.RowBg = true
-    leftFourthTable:SetStyle("CellPadding", 10)
-    leftFourthTable.Size = {234 * Scale(), 150 * Scale()}
-
-    local nameRow4 = leftFourthTable:AddRow()
-    nameRow4.Headers = true
-
-    AlignCellTitle(nameRow4, "Require", "WizardLevels")
-
-    local checkboxRow4 = leftFourthTable:AddRow()
-
-    MakeCheckbox(checkboxRow4, tabOwner, "RequireWizardLevels", "WizardLevelsTrue", "WizardLevelsFalse")
-end
-
-local function CreateTopBar(treeParent, tabOwner, tabName)
-    -- HEADER TABLE --
-    local headerTable = treeParent:AddTable("Header", 1)
-    headerTable.ColumnDefs[1] = {
-        Width = 1190 * Scale(),
-        WidthFixed = true
-    }
-    headerTable:SetStyle("CellPadding", 0)
-    MakeTableTitle(headerTable:AddRow():AddCell(), tabName)
-
-    local controlTable = headerTable:AddRow():AddCell():AddTable("Control", 3)
-    controlTable.Size = {1190 * Scale(), 100 * Scale()}
-    controlTable.ColumnDefs[1] = {
-        Width = 980 * Scale(),
-        WidthFixed = true
-    }
-    controlTable.ColumnDefs[2] = {
-        WidthStretch = true
-    }
-    controlTable.ColumnDefs[3] = {
-        Width = 10 * Scale(),
-        WidthFixed = true
-    }
-
-    local controlRow = controlTable:AddRow()
-    local overrideCell = controlRow:AddCell()
+    end)
 
     -- HEADER CONTROLS --
     if tabOwner ~= "Global" then
-        local overrideTable = overrideCell:AddTable("OverrideTable", 2)
-        overrideTable.ColumnDefs[1] = {
-            Width = 234 * Scale(),
-            WidthFixed = true
-        }
-        overrideTable.ColumnDefs[2] = {
-            Width = 244 * Scale(),
-            WidthFixed = true
-        }
+        local overrideTable = controlRow:AddCell():AddTable("OverrideTable", 2)
+        overrideTable.SizingStretchProp = true
         overrideTable.PadOuterX = false
         overrideTable.NoPadInnerX = true
         overrideTable.NoPadOuterX = true
@@ -315,6 +428,7 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
         local overrideRow = overrideTable:AddRow()
 
         local overrideTextTable = overrideRow:AddCell():AddTable("BonusText", 1)
+        overrideTextTable.SizingStretchProp = true
         overrideTextTable.PadOuterX = false
         overrideTextTable.NoPadInnerX = true
         overrideTextTable.NoPadOuterX = true
@@ -323,179 +437,525 @@ local function CreateTopBar(treeParent, tabOwner, tabName)
         local overrideTextRowTop = overrideTextTable:AddRow()
         overrideTextRowTop:AddSeparator()
         overrideTextRowTop.Headers = true
+        overrideTextRowTop:SetColor("TableHeaderBg", ToVec4(69, 49, 33, 0.8))
 
-        local overrtideTextRow = overrideTextTable:AddRow()
-        overrtideTextRow.Headers = true
+        local overrideTextRow = overrideTextTable:AddRow()
+        overrideTextRow.Headers = true
+        overrideTextRow:SetColor("TableHeaderBg", ToVec4(69, 49, 33, 0.8))
 
-        AlignCellTitle(overrtideTextRow, "Override")
+        MakeTextCentered(overrideTextRow, "Override")
 
         local overrideTextRowBottom = overrideTextTable:AddRow()
         overrideTextRowBottom:AddSeparator()
         overrideTextRowBottom.Headers = true
+        overrideTextRowBottom:SetColor("TableHeaderBg", ToVec4(69, 49, 33, 0.8))
 
         local overrideCheckboxTable = overrideRow:AddCell():AddTable("BonusSlider", 1)
-        overrideCheckboxTable.RowBg = true
+        overrideCheckboxTable.SizingStretchProp = true
         overrideCheckboxTable:SetStyle("CellPadding", 10)
 
         local overrideCheckboxRow = overrideCheckboxTable:AddRow()
+        overrideCheckboxRow:SetColor("TableHeaderBg", ToVec4(236, 202, 142, 0.3))
+        overrideCheckboxRow.Headers = true
 
         local overrideTrue = tabName .. " " .. GetString("OverrideTrue")
         local overrideFalse = tabName .. " " .. GetString("OverrideFalse")
-        local overrideCheckbox = MakeCheckbox(overrideCheckboxRow, tabOwner, "OverrideGlobals")
-        local overrideTooltip = overrideCheckbox:Tooltip():AddText(overrideCheckbox.Checked and overrideTrue or overrideFalse)
+        local overrideCheckbox = MakeCheckbox(overrideCheckboxRow, tabOwner, "OverrideGlobals", overrideTrue, overrideFalse)
         local onChange = overrideCheckbox.OnChange
         overrideCheckbox.OnChange = function(c)
             if onChange then
                 onChange(c)
             end
 
-            if c.Checked then
-                PopulateGenericTab(treeParent, tabOwner, tabName)
-                overrideTooltip:Destroy()
-                overrideTooltip = c:Tooltip():AddText(overrideTrue)
-            elseif ModTabs[tabOwner].Content ~= nil then
-                ModTabs[tabOwner].Content:Destroy()
-                ModTabs[tabOwner].Content = nil
-                overrideTooltip:Destroy()
-                overrideTooltip = c:Tooltip():AddText(overrideFalse)
-            end
+            RefreshTabs()
         end
 
         if overrideCheckbox.Checked == true then
-            PopulateGenericTab(treeParent, tabOwner, tabName)
+            PopulateSettingsTab(treeParent, tabOwner, tabName, characterData)
         end
     end
-
-    -- RESET BUTTON --
-    local resetButton = controlRow:AddCell():AddButton(GetString("Reset5e"))
-    resetButton:Tooltip():AddText("Reset " .. tabName .. " " .. GetString("Follow5e"))
-    resetButton.Size = {200 * Scale(), 80 * Scale()}
-    resetButton.OnClick = function()
-        if tabOwner == "Global" then
-            local spellSaveSetting = GetSetting(tabOwner, "StaticSpellSaveDC")
-            local defaultSetting = ModConfig.Defaults.StaticSpellSaveDC
-
-            if spellSaveSetting ~= defaultSetting then
-                UpdateScrollSpells()
-            end
-        end
-
-        Ext.Net.PostMessageToServer("RequestResetCharacter", Ext.Json.Stringify(tabOwner))
-
-        ModConfig[tabOwner] = {}
-        ModConfig[tabOwner].OverrideGlobals = true
-
-        SaveConfig()
-        RecreateTab(treeParent, tabOwner, tabName)
-    end
-
-    controlRow:AddCell()
 end
 
-local function CharacterTab(treeParent, tabOwner, tabName)
-    if ModTabs[tabOwner] ~= nil then
-        return
-    end
-
-    ModTabs[tabOwner] = {}
-    ModTabs[tabOwner].Tab = treeParent
-
-    CreateTopBar(treeParent, tabOwner, tabName)
-end
-
-local function MainTab(treeParent)
+--- Create a tab bar for settings tabs
+---@param treeParent ExtuiTreeParent
+local function SettingsTab(treeParent)
     local tabOwner = "Global"
     local tabName = GetString("Global")
-    
-    if ModTabs[tabOwner] == nil then
+
+    if SettingTabs[tabOwner] == nil then
         LoadConfig()
 
-        if ModConfig[tabOwner] == nil then
-            ModConfig[tabOwner] = {}
+        if ModConfig[tabOwner] == nil or ModConfig[tabOwner].MajorVersion == nil or ModConfig[tabOwner].MajorVersion < ConfigDefaults.MajorVersion then
+            ModConfig[tabOwner] = ConfigDefaults
+            SaveConfig()
         end
 
         local mainTabBar = treeParent:AddTabBar("MainTabBar")
-        local globalTab = mainTabBar:AddTabItem(tabOwner)
+        local globalTab = mainTabBar:AddTabItem(tabName)
 
-        ModTabs[tabOwner] = {}
-        ModTabs[tabOwner].Tab = globalTab
+        SettingTabs[tabOwner] = {}
+        SettingTabs[tabOwner].Tab = globalTab
 
-        ModTabs.MainTab = mainTabBar
+        SettingTabs.MainTab = mainTabBar
 
-        CreateTopBar(globalTab, tabOwner, tabName)
-        PopulateGenericTab(globalTab, tabOwner, tabName)
-    elseif ModTabs.Global ~= nil then
-        RecreateTab(ModTabs.Global.Tab, tabOwner, tabName)
+        CreateSettingsTopBar(globalTab, tabOwner, tabName)
+        PopulateSettingsTab(globalTab, tabOwner, tabName)
+    elseif SettingTabs.Global ~= nil then
+        RecreateTab("Settings", tabOwner, tabName)
     end
 end
 
-function RecreateTab(treeParent, tabOwner, tabName)
-    if ModTabs and ModTabs[tabOwner] and ModTabs[tabOwner].Content ~= nil then
-        ModTabs[tabOwner].Content:Destroy()
-        ModTabs[tabOwner].Content = nil
+--- Populate a character's scribing tab
+---@param treeParent ExtuiTreeParent
+---@param tabOwner string
+---@param tabName string
+---@param spellList? table
+local function PopulateScribingList(treeParent, tabOwner, tabName, spellList)
+    local contentGroup = treeParent:AddGroup("Content")
+    contentGroup:SetStyle("SeparatorTextAlign", 0.5)
 
-        PopulateGenericTab(treeParent, tabOwner, tabName)
+    if ScribingTabs and ScribingTabs[tabOwner] then
+        ScribingTabs[tabOwner].Content = contentGroup
     end
-end
 
-Ext.RegisterNetListener("UpdatePartyMembers", function(call, payload)
-    local partyMembers = Ext.Json.Parse(payload)
+    if spellList == nil and CachedSpells[tabOwner] ~= nil then
+        spellList = CachedSpells[tabOwner]
+    end
 
-    if partyMembers == nil then
-        Log("Failed to get party members!")
+    if spellList == nil then
         return
     end
 
-    for tabOwner, _ in pairs(ModTabs) do
-        if tabOwner ~= "Global" and tabOwner ~= "MainTab" then
-            if ModTabs and ModTabs[tabOwner] ~= nil and ModTabs[tabOwner].Tab ~= nil then
-                ModTabs[tabOwner].Tab:Destroy()
-                ModTabs[tabOwner] = nil
+    local canScribe = true
+
+    if ActiveScribing and ActiveScribing[tabOwner] then
+        canScribe = false
+        MakeScribeProgressTable(contentGroup, tabOwner, false)
+    end
+
+    -- CONTENT TABLE --
+    local contentTable = contentGroup:AddTable("ContentTable", 1)
+    contentTable.SizingStretchProp = true
+    contentTable.NoHostExtendX = true
+
+    -- SCRIBE TABLE --
+    local scribeTable = contentTable:AddRow():AddCell():AddTable("ScribeTable", 6)
+    scribeTable.BordersInnerH = true
+    scribeTable.ScrollY = true
+    scribeTable.SizingStretchProp = true
+    scribeTable.NoHostExtendX = true
+    scribeTable:SetStyle("CellPadding", 10)
+    scribeTable.ColumnDefs[1] = {
+        Width = 60 * Scale(),
+        WidthFixed = true
+    }
+
+    local headerRow = scribeTable:AddRow()
+    headerRow.Headers = true
+
+    headerRow:AddCell()
+    headerRow:AddCell():AddText(GetString("Spell"))
+    headerRow:AddCell():AddText(GetString("Level"))
+    headerRow:AddCell():AddText(GetString("Time"))
+    headerRow:AddCell():AddText(GetString("Cost"))
+
+    local unpreparedSpells = {}
+
+    for _, v in ipairs(spellList.SpellBook) do
+        table.insert(unpreparedSpells, v)
+    end
+
+    for _, spellId in ipairs(spellList.SpellBook) do
+        if spellList.PreparedSpells[spellId] then
+            MakeScribeRow(scribeTable, tabOwner, spellId, canScribe)
+
+            for j, unprepSpellId in ipairs(unpreparedSpells) do
+                if unprepSpellId == spellId then
+                    table.remove(unpreparedSpells, j)
+                    break
+                end
             end
         end
     end
 
-    for characterGuid, _ in pairs(partyMembers) do
+    if #unpreparedSpells > 0 then
+        local unpreparedHeader = scribeTable:AddRow()
+        unpreparedHeader.Headers = true
+        unpreparedHeader:AddCell()
+        unpreparedHeader:AddCell():AddText(GetString("NotPrepared"))
+
+        for _, spellId in ipairs(unpreparedSpells) do
+            MakeScribeRow(scribeTable, tabOwner, spellId, false)
+        end
+    end
+end
+
+--- Create a tab bar for scribing tabs
+---@param treeParent ExtuiTreeParent
+local function ScribingTab(treeParent)
+    if ScribingTabs.MainTab == nil then
+        local arcanaTable = treeParent:AddTable("Arcana", 1)
+
+        MakeTitle(arcanaTable:AddRow():AddCell(), "NoCharactersArcana")
+        local mainTabBar = treeParent:AddTabBar("MainTabBar")
+
+        ScribingTabs.Arcana = arcanaTable
+        ScribingTabs.MainTab = mainTabBar
+    end
+end
+
+--- Create a window for setting a keybind
+local function KeybindSettingWindow()
+    if ScribeWindow.KeybindWindow ~= nil then
+        ScribeWindow.KeybindWindow.Open = true
+        ScribeWindow.KeybindActive = true
+        ScribeWindow.KeybindText:Destroy()
+        ScribeWindow.KeybindText = nil
+        ScribeWindow.KeybindText = ScribeWindow.KeybindTextCell:AddSeparatorText(GetString("WaitingForInput"))
+        return
+    end
+
+    local windowSize = {800 * Scale(), 350 * Scale()}
+    local keybindWindow = Ext.IMGUI.NewWindow(GetString("ToggleScribingPanel"))
+    keybindWindow.AlwaysAutoResize = true
+    keybindWindow.Closeable = true
+    keybindWindow.NoCollapse = true
+    keybindWindow.NoMove = true
+    keybindWindow:SetStyle("WindowMinSize", windowSize[1], 1)
+    keybindWindow:SetStyle("WindowTitleAlign", 1)
+    keybindWindow:SetStyle("WindowPadding", 0)
+    keybindWindow:SetStyle("WindowBorderSize", 0)
+    keybindWindow:SetStyle("SeparatorTextAlign", 0.5)
+    keybindWindow:SetStyle("WindowTitleAlign", 0.5)
+    keybindWindow:SetColor("TitleBgActive", {0, 0, 0, 0.9})
+    keybindWindow:SetColor("TitleBg", {0, 0, 0, 0.9})
+    keybindWindow:SetColor("TitleBgCollapsed", {0, 0, 0, 0.9})
+    keybindWindow:SetColor("WindowBg", {0, 0, 0, 0.9})
+    keybindWindow.OnClose = function()
+        ScribeWindow.KeybindActive = false
+    end
+
+    -- KeybindActive == true prevents keys from being processed by the game
+    ScribeWindow.KeybindActive = true
+    ScribeWindow.KeybindWindow = keybindWindow
+
+    -- Center window on screen
+    local screenCenter = {Ext.IMGUI.GetViewportSize()[1] / 2, Ext.IMGUI.GetViewportSize()[2] / 2}
+    keybindWindow:SetPos({screenCenter[1] - windowSize[1] / 2, screenCenter[2] - windowSize[2] / 2})
+
+    local keybindTable = keybindWindow:AddTable("keybindTable", 1)
+    keybindTable.SizingStretchProp = true
+    keybindTable:SetStyle("SeparatorTextBorderSize", 0)
+    keybindTable:SetStyle("SeparatorTextPadding", 0)
+    keybindTable:SetStyle("CellPadding", 0)
+
+    MakeTitle(keybindTable:AddRow():AddCell(), "PressKeyModifier")
+
+    keybindTable:AddRow():AddCell():AddText(" ")
+
+    local textCell = keybindTable:AddRow():AddCell()
+    local keybindText = textCell:AddSeparatorText(GetString("WaitingForInput"))
+
+    ScribeWindow.KeybindText = keybindText
+    ScribeWindow.KeybindTextCell = textCell
+
+    keybindTable:AddRow():AddCell():AddText(" ")
+
+    local confirmButton, cancelButton = MakeTwoButtons(keybindTable:AddRow():AddCell(), windowSize[1], 80, "Confirm", "Cancel")
+
+    confirmButton.OnClick = function()
+        if TempKeybind ~= nil then
+            UIConfig.Keybind = TempKeybind
+
+            if TempModifiers ~= nil then
+                UIConfig.Modifiers = TempModifiers
+            end
+
+            TempKeybind = nil
+            TempModifiers = nil
+
+            SaveUIConfig()
+
+            ScribeWindow.KeybindButton.Shortcut = GetDisplayUISetting("Keybind")
+        end
+
+        ScribeWindow.KeybindActive = false
+        ScribeWindow.KeybindWindow.Open = false
+    end
+
+    cancelButton.OnClick = function()
+        ScribeWindow.KeybindActive = false
+        ScribeWindow.KeybindWindow.Open = false
+    end
+end
+
+--- Close scribing notification window
+---@param fromAutohide? any
+function CloseScribeWindow(fromAutohide)
+    if ScribeWindow.Window ~= nil and ScribeWindow.Content ~= nil and (not fromAutohide or UIConfig.AutoHide) then
+        ScribeWindow.Content:Destroy()
+        ScribeWindow.Content = nil
+        ScribeWindow.Window.Open = false
+    end
+end
+
+--- Show or update scribing notification window
+function ShowScribeWindow()
+    if ActiveScribing == nil then
+        return
+    end
+
+    if next(ActiveScribing) == nil then
+        SetTimer(100, CloseScribeWindow)
+        return
+    end
+
+    if ScribeWindow.Window == nil then
+        local scribingWindow = Ext.IMGUI.NewWindow(GetString("ActiveScribingPanel"))
+        scribingWindow.AlwaysAutoResize = true
+        scribingWindow.Closeable = true
+        scribingWindow.NoBackground = true
+        scribingWindow.NoCollapse = true
+        scribingWindow:SetStyle("WindowPadding", 0)
+        scribingWindow:SetStyle("WindowBorderSize", 0)
+        scribingWindow:SetStyle("SeparatorTextAlign", 0.5)
+        scribingWindow:SetStyle("WindowTitleAlign", 0.5)
+        scribingWindow:SetColor("TitleBgActive", {0, 0, 0, 0.75})
+        scribingWindow:SetColor("TitleBg", {0, 0, 0, 0.75})
+        scribingWindow:SetColor("TitleBgCollapsed", {0, 0, 0, 0.75})
+        scribingWindow:SetColor("MenuBarBg", {0, 0, 0, 0.6})
+        scribingWindow:SetColor("Border", {0, 0, 0, 0.75})
+        scribingWindow:SetPos({0, 0})
+
+        local mainMenu = scribingWindow:AddMainMenu()
+        local scribingMenu = mainMenu:AddMenu(GetString("Settings"))
+
+        local notificationsButton = scribingMenu:AddItem(GetString("ShowNotifications"))
+        notificationsButton.Shortcut = GetDisplayUISetting("ShowNotifications")
+        notificationsButton:Tooltip():AddText(GetString("ShowNotificationsTooltip"))
+        notificationsButton.OnClick = function()
+            UIConfig.ShowNotifications = not UIConfig.ShowNotifications
+            SaveUIConfig()
+
+            ScribeWindow.NotificationsButton.Shortcut = GetDisplayUISetting("ShowNotifications")
+        end
+
+        local keybindButton = scribingMenu:AddItem(GetString("SetKeybind"))
+        keybindButton.Shortcut = GetDisplayUISetting("Keybind")
+        keybindButton:Tooltip():AddText(GetString("SetKeyBindTooltip"))
+        keybindButton.OnClick = function()
+            KeybindSettingWindow()
+        end
+
+        local autohideButton = scribingMenu:AddItem(GetString("AutoHide"))
+        autohideButton.Shortcut = GetDisplayUISetting("AutoHide")
+        autohideButton:Tooltip():AddText(GetString("AutoHideTooltip"))
+        autohideButton.OnClick = function()
+            UIConfig.AutoHide = not UIConfig.AutoHide
+            SaveUIConfig()
+
+            ScribeWindow.AutoHideButton.Shortcut = GetDisplayUISetting("AutoHide")
+        end
+
+        local hideDelayButton = scribingMenu:AddItem(GetString("AutoHideDelay"))
+        hideDelayButton.Shortcut = GetDisplayUISetting("AutoHideDelay") .. "s"
+        hideDelayButton:Tooltip():AddText(GetString("AutoHideDelayTooltip"))
+
+        local hideDelaySlider = scribingMenu:AddSliderInt("", GetDisplayUISetting("AutoHideDelay"), 5, 30)
+        hideDelaySlider.AlwaysClamp = true
+        hideDelaySlider.NoInput = true
+        hideDelaySlider:Tooltip():AddText(GetString("AutoHideDelayTooltip"))
+        hideDelaySlider.OnChange = function(s)
+            UIConfig.AutoHideDelay = s.Value[1]
+            SaveUIConfig()
+
+            ScribeWindow.HideDelayButton.Shortcut = GetDisplayUISetting("AutoHideDelay") .. "s"
+        end
+
+        local resetPosButton = scribingMenu:AddItem(GetString("ResetPosition"))
+        resetPosButton:Tooltip():AddText(GetString("ResetPositionTooltip"))
+        resetPosButton.OnClick = function()
+            scribingWindow:SetPos({0, 0})
+        end
+
+        ScribeWindow.Window = scribingWindow
+        ScribeWindow.KeybindButton = keybindButton
+        ScribeWindow.AutoHideButton = autohideButton
+        ScribeWindow.HideDelayButton = hideDelayButton
+        ScribeWindow.NotificationsButton = notificationsButton
+    end
+
+    ScribeWindow.Window.Open = true
+    ScribeWindow.KeybindButton.Shortcut = GetDisplayUISetting("Keybind")
+    ScribeWindow.AutoHideButton.Shortcut = GetDisplayUISetting("AutoHide")
+    ScribeWindow.NotificationsButton.Shortcut = GetDisplayUISetting("ShowNotifications")
+
+    if ScribeWindow.Content ~= nil then
+        ScribeWindow.Content:Destroy()
+        ScribeWindow.Content = nil
+    end
+
+    local scribingTable = ScribeWindow.Window:AddTable("ScribingTable", 3)
+    scribingTable:SetStyle("CellPadding", 0)
+
+    ScribeWindow.Content = scribingTable
+
+    local rowRef
+    local columnNum = 0
+    local maxLines = 0
+    local cachedProgressText = {}
+
+    for characterGuid, _ in pairs(ActiveScribing) do
+        local progressInfoText = GetProgressInfoText(characterGuid)
+        maxLines = math.max(maxLines, GetWrappedLinesCount(progressInfoText, 47))
+        cachedProgressText[characterGuid] = progressInfoText
+    end
+
+    for characterGuid, _ in pairs(ActiveScribing) do
+        if columnNum == 0 then
+            rowRef = scribingTable:AddRow()
+        end
+
+        local paddedText = PadWrappedText(cachedProgressText[characterGuid], 47, maxLines, true)
+
+        MakeScribeProgressTable(rowRef:AddCell(), characterGuid, true, paddedText)
+
+        columnNum = (columnNum + 1) % 3
+    end
+
+    if UIConfig.AutoHide then
+        SetTimer(UIConfig.AutoHideDelay * 1000, CloseScribeWindow)
+    end
+end
+
+--- Recreate a tab in MCM
+---@alias TabType "Settings" | "Scribing"
+---@param tabType TabType
+---@param tabOwner string
+---@param tabName string
+---@param characterData? table
+function RecreateTab(tabType, tabOwner, tabName, characterData)
+    if tabName == nil then
+        tabName = GetDisplayName(tabOwner)
+    end
+
+    if tabType == "Settings" and SettingTabs and SettingTabs[tabOwner] and SettingTabs[tabOwner].Content ~= nil then
+        SettingTabs[tabOwner].Content:Destroy()
+        SettingTabs[tabOwner].Content = nil
+
+        PopulateSettingsTab(SettingTabs[tabOwner].Tab, tabOwner, tabName, characterData)
+    elseif ScribingTabs and ScribingTabs[tabOwner] and ScribingTabs[tabOwner].Content ~= nil then
+        ScribingTabs[tabOwner].Content:Destroy()
+        ScribingTabs[tabOwner].Content = nil
+
+        PopulateScribingList(ScribingTabs[tabOwner].Tab, tabOwner, tabName)
+    end
+end
+
+--- Refresh all tabs in MCM
+---@param partyMembers? table<string,table>
+function RefreshTabs(partyMembers)
+    if partyMembers == nil and CachedPartyMembers ~= nil then
+        partyMembers = CachedPartyMembers
+    end
+
+    if partyMembers == nil then
+        return
+    end
+
+    CachedPartyMembers = partyMembers
+    LoadConfig()
+    ActiveScribing = Ext.Vars.GetModVariables(ModuleUUID).ActiveScribing
+
+    for tabOwner, _ in pairs(SettingTabs) do
+        if tabOwner ~= "Global" and tabOwner ~= "MainTab" then
+            if SettingTabs and SettingTabs[tabOwner] ~= nil and SettingTabs[tabOwner].Tab ~= nil then
+                SettingTabs[tabOwner].Tab:Destroy()
+                SettingTabs[tabOwner] = nil
+            end
+        end
+    end
+
+    for tabOwner, _ in pairs(ScribingTabs) do
+        if tabOwner ~= "Arcana" and tabOwner ~= "MainTab" then
+            if ScribingTabs and ScribingTabs[tabOwner] ~= nil and ScribingTabs[tabOwner].Tab ~= nil then
+                ScribingTabs[tabOwner].Tab:Destroy()
+                ScribingTabs[tabOwner] = nil
+            end
+        end
+    end
+
+    for characterGuid, data in pairs(partyMembers) do
         local characterName = GetDisplayName(characterGuid)
 
         if characterName then
-            if ModTabs and ModTabs[characterGuid] == nil then
-                LoadConfig()
+            if SettingTabs and SettingTabs[characterGuid] == nil then
+                local config = ModConfig[characterGuid]
 
-                if ModConfig[characterGuid] == nil then
-                    ModConfig[characterGuid] = {}
+                if config == nil or config.MajorVersion == nil or config.MajorVersion < ConfigDefaults.MajorVersion then
+                    ModConfig[characterGuid] = ConfigDefaults
+                    SaveConfig()
+                    Log("Major version below latest. Resetting %s settings to default", characterName)
                 end
 
-                if ModTabs.MainTab ~= nil then
-                    local newTab = ModTabs.MainTab:AddTabItem(characterName)
-                    CharacterTab(newTab, characterGuid, characterName)
+                if SettingTabs.MainTab ~= nil then
+                    local newSettingsTab = SettingTabs.MainTab:AddTabItem(characterName)
+
+                    if SettingTabs[characterGuid] == nil then
+                        SettingTabs[characterGuid] = {}
+                        SettingTabs[characterGuid].Tab = newSettingsTab
+
+                        CreateSettingsTopBar(newSettingsTab, characterGuid, characterName, data)
+                    end
+                end
+            end
+
+            if ScribingTabs and ScribingTabs[characterGuid] == nil and (data.Proficient == true or GetSetting(characterGuid, "CraftingArcanaProficiency") == false) then
+                if ScribingTabs.MainTab ~= nil then
+                    local newScribingTab = ScribingTabs.MainTab:AddTabItem(characterName)
+                    ScribingTabs[characterGuid] = {}
+                    ScribingTabs[characterGuid].Tab = newScribingTab
+                    ScribingTabs.Arcana.Visible = false
+                    CachedSpells[characterGuid] = data.Spells
+
+                    PopulateScribingList(newScribingTab, characterGuid, characterName, data.Spells)
                 end
             end
         end
     end
 
-    if ModTabs.Global ~= nil then
-        RecreateTab(ModTabs.Global.Tab, "Global", GetString("Global"))
-    end
-end)
-
-Ext.Events.SessionLoaded:Subscribe(function()
-    UpdateScrollSpells()
-    Log("SESSION LOADED - CLIENT")
-end)
-
-Ext.Events.StatsLoaded:Subscribe(function()
-    LoadBackupConfig()
-    Log("STATS LOADED - CLIENT")
-end)
-
-if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
-    if ModTabs == nil then
-        ModTabs = {}
+    if SettingTabs.Global ~= nil then
+        RecreateTab("Settings", "Global", GetString("Global"))
     end
 
-    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "True Scrolls", MainTab)
-    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, "5e Reference", ReferenceTab)
+    -- Update scribe window state if it's open
+    if ScribeWindow.Content ~= nil then
+        ShowScribeWindow()
+    end
 end
 
+if Ext.Mod.IsModLoaded("755a8a72-407f-4f0d-9a33-274ac0f0b53d") == true then
+    if SettingTabs == nil then
+        SettingTabs = {}
+    end
 
+    if ScribingTabs == nil then
+        ScribingTabs = {}
+    end
+
+    if CachedSpells == nil then
+        CachedSpells = {}
+    end
+
+    if ScribeWindow == nil then
+        ScribeWindow = {}
+    end
+
+    if CachedScribingStates == nil then
+        CachedScribingStates = {}
+    end
+
+    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, Ext.Loca.GetTranslatedString("h4d9d208921994637aaf1ddf7d2de9cfc4c5d"), ScribingTab)
+    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, Ext.Loca.GetTranslatedString("h19961661dcc740d79ea007b9313a936738a3"), SettingsTab)
+    Mods.BG3MCM.IMGUIAPI:InsertModMenuTab(ModuleUUID, Ext.Loca.GetTranslatedString("hcda64c5b293e4596986e7d0008da5e2516ac"), ReferenceTab)
+end

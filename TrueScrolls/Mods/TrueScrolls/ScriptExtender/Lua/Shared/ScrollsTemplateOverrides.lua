@@ -1,12 +1,14 @@
 --- Replace spells in scroll templates with the ones in TrueScrolls.txt or vice versa
----@param clientSpells table | nil
+---@param clientSpells? table<string, string>
 function UpdateScrollSpells(clientSpells)
     local allObjects = Ext.Stats.GetStats("Object")
     local allSpells = Ext.Stats.GetStats("SpellData")
     local spellsTrueScrolls = clientSpells
-    local configValue = GetSetting("Global", "StaticSpellSaveDC")
+    local staticDc = GetSetting("Global", "StaticSpellSaveDC")
+    local wizardCantris = GetSetting("Global", "WizardCopyCantrips")
+    local scrollsList = {}
 
-    if configValue == nil then
+    if staticDc == nil then
         Log("Failed to get config value for Spell Save DC!")
         return
     end
@@ -37,21 +39,48 @@ function UpdateScrollSpells(clientSpells)
             end
 
             if scrollTemplate and #scrollTemplate.OnUsePeaceActions > 0 then
-                for _, actionData in ipairs(scrollTemplate.OnUsePeaceActions) do
+                local spellRef
+
+                for i, actionData in ipairs(scrollTemplate.OnUsePeaceActions) do
                     if actionData and actionData.Type == "UseSpell" then
+                        local spellStats = Ext.Stats.Get(actionData.Spell)
+
                         if actionData.Spell == "Projectile_Fireball_FromScroll" then
                             actionData.Spell = "Projectile_Fireball"
                         end
 
-                        if configValue == true then
+                        spellRef = actionData.Spell
+
+                        if staticDc == true then
                             if spellsTrueScrolls[actionData.Spell] then
                                 actionData.Spell = spellsTrueScrolls[actionData.Spell]
                             end
                         elseif string.find(actionData.Spell, "TrueScrolls") then
-                            local spellStats = Ext.Stats.Get(actionData.Spell)
-
                             if spellStats and spellStats.Using ~= nil then
                                 actionData.Spell = spellStats.Using
+                                spellRef = actionData.Spell
+                            end
+                        end
+
+                        local trueSpell = GetTrueSpell(actionData.Spell)
+                        scrollsList[trueSpell] = {
+                            Template = object.RootTemplate,
+                            Level = spellStats.Level
+                        }
+                    elseif actionData and actionData.Type == "LearnSpell" then
+                        local checkSpell = actionData.Spell
+
+                        if checkSpell == nil or checkSpell == "" then
+                            checkSpell = spellRef
+                        end
+
+                        local spellStats = Ext.Stats.Get(checkSpell)
+
+                        if spellStats and spellStats.Level == 0 then
+                            if wizardCantris == true then
+                                actionData.Spell = tostring(checkSpell)
+                            else
+                                actionData.Spell = ""
                             end
                         end
                     end
@@ -61,14 +90,11 @@ function UpdateScrollSpells(clientSpells)
     end
 
     if Ext.IsClient() == true then
-        Ext.Net.PostMessageToServer("SpellSaveSettingChanged", Ext.Json.Stringify(spellsTrueScrolls))
+        Ext.Net.PostMessageToServer("TrueScrolls_SpellSaveSettingChanged", Ext.Json.Stringify(spellsTrueScrolls))
+        Ext.Net.PostMessageToServer("TrueScrolls_ScrollsListUpdated", Ext.Json.Stringify(scrollsList))
         Log("Updated spell scrolls with static DC - CLIENT")
     else
+        RecreateScrolls()
         Log("Updated spell scrolls with static DC - SERVER")
     end
-
-    if Ext.IsServer() == true then
-        RecreateScrolls()
-    end
-
 end

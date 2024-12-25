@@ -15,7 +15,7 @@
   <content contentuid="h9d3583bdbf0a457784ec12e65b720c0b9c02" version="1">Wizards can copy spells from scrolls into their spellbooks without any additional checks.</content>
   <content contentuid="h5dca14e9991a4162a9a20f88959281305g15" version="1">[5e] Attack roll spells use an attack bonus determined by the scroll's spell level.</content>
   <content contentuid="h50759bb185a4401eb6cc165df8224038d0cg" version="1">Attack roll spells use the caster's attack bonuses.</content>
-  <content contentuid="h17e37f5372d64fa1a5a9d08f34b07ca729dd" version="1">[5e] Spells that require targets to roll a saving throw use a spell save DC determined the scroll's spell level.</content>
+  <content contentuid="hcf886357fdb04c4d8ed1e64b33c7b0a84386" version="1">[5e] Spells that require targets to roll a saving throw use a spell save DC determined the scroll's spell level.&lt;br&gt;This setting can only be changed globally for all characters.</content>
   <content contentuid="h676f60f7bbf84f1b8250b5445b903286c302" version="1">Spells that require a saving throw use the caster's spell save DC.</content>
   <content contentuid="h950ad5245cff41c1a0b7bd7f238540408630" version="1">Attack roll bonus when casting from a scroll will be increased or decreased depending on this setting.</content>
   <content contentuid="h1a6dbfe1f384464a9fca19768b3825228220" version="1">DC for casting spells of a higher level than you can normally cast will be modified depending on this setting.</content>
@@ -65,5 +65,156 @@
   <content contentuid="h5346f073925d4bb193d054a413414be2e4f2" version="1">Wizard Levels</content>
   <content contentuid="h3b3b18f7e2b74e2d984740657fb8b1ec223g" version="1">[5e] Copying a spell from a scroll requires having enough wizard levels to cast it.</content>
   <content contentuid="h9b9dfe01c9444ae99177f32946ed2c9917d0" version="1">Copying a spell from a scroll requires having a spell slot of the same or a higher level than the spell.</content>
-    <content contentuid="ha2b3d9b7fae844b4900f0c7b3784e751f2a4" version="1">Wizard level is too low!</content>
+  <content contentuid="ha2b3d9b7fae844b4900f0c7b3784e751f2a4" version="1">Wizard level is too low!</content>
+  <content contentuid="h4d9d208921994637aaf1ddf7d2de9cfc4c5d" version="1">Scribing</content>
+  <content contentuid="hdd5303a36a5348a189aef802fa3aa81232f5" version="1">Adjust how many days it takes to craft scrolls of different levels.</content>
+  <content contentuid="h69bd418bf45f425ba59977f1e7d591f95g5g" version="1">Adjust how much gold it costs to craft scrolls of different levels.</content>
+  <content contentuid="h6a40c7fb2b78455392e0297f3f0dd9d9787f" version="1">Scribing scrolls requires items such as ink, parchment, and quills.&lt;br&gt;They can be bought from traders that sell scrolls.</content>
+  <content contentuid="had89dee59b584d5f8273a60dc240a721d9a0" version="1">Only gold is required when scribing scrolls.</content>
+  <content contentuid="h8e1d52a7be8a40b4a14202851e78e039g1c9" version="1">[5e] Scribing scrolls requires proficiency in Arcana.</content>
+  <content contentuid="h570d9a6132ea4b73b67cef6a33e419a416ad" version="1">Scribing can be done without proficiency in Arcana.</content>
+  <content contentuid="h3817823335c14250b41620cf5facc29ec786" version="1">If character doesn't have enough gold for scribing, the cost will be shared among the party.</content>
+  <content contentuid="h12ed809109d042db93fd59e76dfd46a3d7e0" version="1">Character must have enough gold in their inventory for scribing.</content>
+  <content contentuid="h918a332662154c90a6a8259c5e165b20e757" version="1">Scribing</content>
+  <content contentuid="h5f82c380ed484ab9ae26b08c3a1fd1d106aa" version="1">Requires Items</content>
+  <content contentuid="ha8ef31c5917944689b1ad4eb63d9385efag7" version="1">Scribing Items</content>
+  <content contentuid="h657045eead5f494f8dde0e279743dde65705" version="1">Arcana Proficiency</content>
+  <content contentuid="h3e658cf539974a4f920208d267e9d037fg58" version="1">Share</content>
+  <content contentuid="h8d4fc5b086954d0f9152abc87ec75f49f45f" version="1">Scribing Cost</content>
+  <content contentuid="hec8d417522624146af2d52c9cb17522c56fc" version="1">Adjust</content>
+  <content contentuid="h3209ce65935548de87fa98b0b6eda570fb08" version="1">Scribing Time</content>
+  <content contentuid="h5328fed43ae649d2aa50cf0b1ba3376158cd" version="1">Prepared Spell</content>
+  <content contentuid="hfd2c0df657cf4fa498ed63b584ee09314a29" version="1">Disabled</content>
+  <content contentuid="hf3b26639824b42778aea804b911fd419870f" version="1">Long Rest</content>
+  <content contentuid="h83fdf44cf0af46928acc4013d67874adgf38" version="1">All Day</content>
+  <content contentuid="h4935ea83efc146f3b1cf324d84b318659461" version="1">A spell does not need to be prepared when scribing a scroll.</content>
+  <content contentuid="hbaa958573710445982cc0d0f285ed3540168" version="1">A spell must be prepared before starting long rest to scribe that day.</content>
+  <content contentuid="h4788ec8cb55c4743bfb5f1b036f99deda630" version="1">Removing a spell from prepared spells any time during a day will prevent the scroll from being scribed.</content>
+  <content contentuid="hb9b9fb63ac7d4403941f2094aefa98c5ffg5" version="1">Carefully tracing intricate runes.</content>
+  <content contentuid="h57baaf78466d4ca6993635b250e5dcb84ea2" version="1">Drying spilled ink.</content>
+  <content contentuid="h7058d7e5a89c434894965e56df540718a0g2" version="1">Sharpening the quill.</content>
+  <content contentuid="hde85402b530544bbaf7a5809f95adf96a538" version="1">Fending off curious familiars.</content>
+  <content contentuid="hb401fd93216b48159dd1574ac0575ffb676e" version="1">Enchanting the ink bottle.</content>
+  <content contentuid="hc24bce8e80904e0299df8a572facad8f37b9" version="1">Arguing with a magic quill.</content>
+  <content contentuid="h7f3d2e37fdf44dcbaa22e6096796a7a6f62e" version="1">Consulting an ancient spellbook.</content>
+  <content contentuid="h46b36cd1d03e43f9961e01f2c04404a2e955" version="1">Whispering words of binding.</content>
+  <content contentuid="hf9d106bf063142bd9e3c2170bb33e29cg7g6" version="1">Carefully erasing a mistake.</content>
+  <content contentuid="hb8e29bcd11b7488b994b1a9116143dd0beaf" version="1">Humming a focus incantation.</content>
+  <content contentuid="hb0c20e1d391445dbb2cc0caa341f3b6defb6" version="1">Deciphering faded runes.</content>
+  <content contentuid="h250059c4db344332b2a21da1ac13c7807041" version="1">Referencing a scroll-scribing manual.</content>
+  <content contentuid="h0b1e65cef79748d7aefdec75c04f008744ba" version="1">Shushing the wind blowing out the candles.</content>
+  <content contentuid="hcfa6f3a7f7dc43c3a79fd0ad3d6384e2afa3" version="1">Tracing glyphs from an ancient Sylvan tome.</content>
+  <content contentuid="ha7778b656db14b9ab543d37f2479813ad679" version="1">Ensuring the ink doesn't smudge... again.</content>
+  <content contentuid="h97072fa8610c4222bf913729a211958812g5" version="1">Adding layers of protective wards.</content>
+  <content contentuid="he0f48569b25446f7ae33ce8fd53aab314ca3" version="1">Realizing the ink bottle is almost empty.</content>
+  <content contentuid="h0ef921c14fa4482e9e93c6542fa9d83ca2ea" version="1">Layering enchantments onto the scroll.</content>
+  <content contentuid="h3947bfcd9ace42228146b7834538b5f7e7ef" version="1">Smoothing out a wrinkle in the parchment.</content>
+  <content contentuid="h935c586a0f9f4a4f822419f23689ca5e4ec7" version="1">Taking a break from scribing today.</content>
+  <content contentuid="h963ccc0ae21e444aa4d3d9453ad16020ab8b" version="1">Pausing the work for the day.</content>
+  <content contentuid="he6b23daf6eb8485991b5d87f77073107ba34" version="1">Leaving the scroll for tomorrow.</content>
+  <content contentuid="h1e675c03cdac4fc890494c3b60767b32b71e" version="1">Setting aside the quill for now.</content>
+  <content contentuid="h240d530b80a948e58e576e52690ee00972ad" version="1">Taking time to recover focus.</content>
+  <content contentuid="h15b49331106b497aba4c2855254f459fd877" version="1">Leaving the scroll unfinished for now.</content>
+  <content contentuid="ha164842d504c48a2b179396c9d34536d53e5" version="1">Stepping away from scribing today.</content>
+  <content contentuid="hab1452e37dbf4decb75b2f4723c24f8c3aac" version="1">Planning the next rune.</content>
+  <content contentuid="ha1b6734a64ed47f7baa3751db68d4e330282" version="1">Considering the scroll's design.</content>
+  <content contentuid="h36435ffbe6d1470d9ffee77baf5a1cd47bfd" version="1">Visualizing the next steps.</content>
+  <content contentuid="heca61114652a4037881359b2d1107b34c4bc" version="1">Recalling the spell's incantation.</content>
+  <content contentuid="hb5df457714174f69ab5bf3a81364ac95c34d" version="1">Pondering the arcane patterns.</content>
+  <content contentuid="h52c75d4dbb204a9da053e9ef57577075e2d3" version="1">Shaping ideas for the scroll.</content>
+  <content contentuid="h388929766a194e7ca34236bfb27d03a03ce3" version="1">Contemplating the glyph sequence.</content>
+  <content contentuid="hcd23a2c1e16245cab20f799d51211ba6gacg" version="1">Rehearsing the next inscription.</content>
+  <content contentuid="hb7ee2166a016424ba938326816c6a0f474ge" version="1">Sketching glyph shapes in the air.</content>
+  <content contentuid="h31072833126f440983a2a807e4d68ed8gb10" version="1">Pondering adjustments to arcane diagrams.</content>
+  <content contentuid="hfbba3b3a29e84a839b62cc2b30d352df1996" version="1">Weighing whether to add a binding ward.</content>
+  <content contentuid="ha69b3407fd6e415e95e4873a6ec912c8gfd3" version="1">Planning the ink mixture for the next sigil.</content>
+  <content contentuid="hdbc2384a069449cb87dc3885a9b85343ddd0" version="1">Adding final touches to the scroll.</content>
+  <content contentuid="h0b86d1479ee54a888761aefb475b773058dg" version="1">Carefully inscribing the last glyphs.</content>
+  <content contentuid="hfb2a638af9794239a4b3a9667457eadaabaf" version="1">Completing the final sequence of sigils.</content>
+  <content contentuid="h6bdb685ba4ef4a92afdb72ac35d809477a8e" version="1">Sealing the spell with a closing ward.</content>
+  <content contentuid="hc26c64464a0141c8b46a3d146f26427e2697" version="1">Reciting the final incantation.</content>
+  <content contentuid="ha30d40b987014798a738f86e19399e44fc0f" version="1">Checking the scroll's integrity one last time.</content>
+  <content contentuid="h601d7fd872db43cab4ba38cb6c21ffdcafa3" version="1">Binding the scroll with an enchanted ribbon.</content>
+  <content contentuid="hb74be35c3a5f4d38b36c19f14a38b89a0a55" version="1">Tracing over the final lines for clarity.</content>
+  <content contentuid="hadecc3a81e414d24b8e5873484cf08df9784" version="1">Adding protective wards to the scroll.</content>
+  <content contentuid="h38b0d7e2f91d427f9fe0ab2a6bb6e0294caf" version="1">Completing the final flourish of runes.</content>
+  <content contentuid="h9b651be5f72744dfb424860ededc6efebb5c" version="1">Reviewing the scroll for any imperfections.</content>
+  <content contentuid="hbbc303df1413485097cfdf309d94706faea9" version="1">Require Roll</content>
+  <content contentuid="h739159cc5b314b4188bfcceb99ee1f074b96" version="1">Scribing Parchment</content>
+  <content contentuid="h8ab799c2ab8d46d0a39db1377d93d73551bg" version="1">Character must succeed an Arcana check (DC 10 + spell level) to make scribing progress each day.</content>
+  <content contentuid="h20a4afebd1604cd686436b5da77324464305" version="1">[5e] No Arcana check is needed when scribing scrolls.</content>
+  <content contentuid="hd4d2c150bbed49d0bfe988cb0d90f785506b" version="1">Arcana Check</content>
+  <content contentuid="h473584cfc147460fb36d4e10f42f2fd1938a" version="1">Downtime</content>
+  <content contentuid="h5033f7ce1bd9467cbb6ef40e113fed69c17e" version="1">Activity Ruleset</content>
+  <content contentuid="hf38a2a956dd741f39bb7a72be15c53249d3a" version="1">Rules As Written</content>
+  <content contentuid="h1a39b73924bf4c7a9a7b00ceaa4a9a446cc0" version="1">Light Activity</content>
+  <content contentuid="h0390192eefdb4e27bc8034f6531f47b3ag25" version="1">Homebrew</content>
+  <content contentuid="hf1e86a9701da4d25b6fefe0080cfdbace14d" version="1">Scribing a scroll requires a full uninterrupted day to make progress.&lt;br&gt;Engaging in combat or taking a short rest outside of camp will pause scribing for the day.</content>
+  <content contentuid="h6c66bf5bad3748bc98951e591759a2018ebc" version="1">Engaging in combat or taking a short rest outside of camp will progress scribing by 2 hours as light activity during long rest.&lt;br&gt;Staying in camp for a day will progress scribing by full 8 hours.</content>
+  <content contentuid="hcc5f8361516249fb8b2c51375b5bd418d66g" version="1">Each long rest counts as 1 day of scribing without any additional conditions.</content>
+  <content contentuid="hd874efb56e8b46e9b16f77c459f1949dg1c3" version="1">Scribing complication!</content>
+  <content contentuid="h5817b4acb9d14d88bd7ff166e1c72eaa4222" version="1">Complications</content>
+  <content contentuid="h858c371dd6944b05a229e0f4962a4a13b996" version="1">Chance of</content>
+  <content contentuid="h872389d9aca94b6597165fcab870a9dca37e" version="1">[5e] A complication might occur every workweek of scribing and when pausing for longer than twice the required time.</content>
+  <content contentuid="he04986c0501b42e5a8dc68a404423dc7de9b" version="1">Complications won't occur during crafting.</content>
+  <content contentuid="h8dff0f10029a49e7a3b44a86443d11acaa46" version="1">Chance of a scribing complication after every workweek.</content>
+  <content contentuid="h43ed22f3563c4d0f90bda5defc375ec075a0" version="1">Quill Breaking</content>
+  <content contentuid="haaa43064ee7f4245aae76eee03ad10a19612" version="1">Chance of breaking a quill after every full day of scribing.</content>
+  <content contentuid="h3f65a838d1824f1b996d05d1149355a752d4" version="1">Scribing a spell scroll takes an amount of time and money related to the level of the spell the character wants to scribe, as shown in the Spell Scroll Costs table. In addition, the character must have proficiency in the Arcana skill and must provide any material components required for the casting of the spell. Moreover, the character must have the spell prepared, or it must be among the character's known spells, in order to scribe a scroll of that spell.&lt;br&gt;Crafting a spell scroll is a solitary task, unlikely to attract much attention. The complications that arise are more likely to involve the preparation needed for the activity. Every workweek spent scribing brings a 10 percent chance of a complication.</content>
+  <content contentuid="hbb0e549ca7ae4d2faf41f57e10f0c7361272" version="1">Scribing a Spell Scroll</content>
+  <content contentuid="he16e7e5147a54b2fbe5dedbc321d19604cd1" version="1">Time</content>
+  <content contentuid="hde532ec6eec24007ac4b39eb7e2c027d22da" version="1">Cost</content>
+  <content contentuid="h11a3b0331b1a40a0bb1a6b47270ed904825c" version="1">st</content>
+  <content contentuid="hf9f0103969884e5989d0b8362a337a0a22b4" version="1">nd</content>
+  <content contentuid="h7485b062d4b846cb84006a9613a3b3828da3" version="1">rd</content>
+  <content contentuid="hf2b060c02efd42139feb4890b1d79ba0c03f" version="1">th</content>
+  <content contentuid="h7b720c92d82e45bb84116986904402cecc0g" version="1">gp</content>
+  <content contentuid="h653d7272ad4d431b8a57eab73e2c886996f1" version="1">day</content>
+  <content contentuid="hf17e9ec34bcf4ff494592e733bc54b558c3d" version="1">days</content>
+  <content contentuid="hee43a21b3a484972be324fc47ab5b1d8a899" version="1">Not Prepared</content>
+  <content contentuid="h063a3f652ee54f5e8c461f60390137804bbf" version="1">No characters with Arcana proficiency.</content>
+  <content contentuid="hb8430dc00d6d48648954ae0fa14a9f5ffg47" version="1">Waiting for input...</content>
+  <content contentuid="h60b562ddb6204f2489d4586f49640455aeec" version="1">Toggle Scribing Panel</content>
+  <content contentuid="h83b24d5cd636476e9be66ad87f5874ca8f6g" version="1">Press a key and a modifier (optional) to set the keybind.</content>
+  <content contentuid="h6c4c0c721df94dfe812790a78e2ecebe3g7a" version="1">Active Scribing Panel</content>
+  <content contentuid="h19961661dcc740d79ea007b9313a936738a3" version="1">Settings</content>
+  <content contentuid="he6fa86a5676843cfbe966027e7da97a9a08f" version="1">Show notifications</content>
+  <content contentuid="hc320cd07aa9841008844b2b1bdd3d14e5530" version="1">Bring up the panel when scribing state changes.</content>
+  <content contentuid="h43831050995a4107b76462fc96c8579ece8b" version="1">Set keybind</content>
+  <content contentuid="h890192a023434611a52b3500703dc17400c3" version="1">Choose a keybind to toggle the scribing panel.</content>
+  <content contentuid="he60912635b3142248155598438c83ae20b2b" version="1">Auto-Hide</content>
+  <content contentuid="h5e0b066bb3fc4845a954fcbe13711af2d016" version="1">Hide the scribing panel automatically after a set time.</content>
+  <content contentuid="h188a221856964479a6218d82874b2b21eb8a" version="1">Auto-Hide delay</content>
+  <content contentuid="ha7ceabd6d88d475a96e021d365d360e2cbdc" version="1">Set the delay before the scribing panel is hidden.</content>
+  <content contentuid="hfc5231d3a3274025bed4b59b9dd27d1642fe" version="1">Reset window</content>
+  <content contentuid="h03f24b544628407d87e04bdbb0c54bda8abf" version="1">Reset the position of the scribing panel.</content>
+  <content contentuid="h15ecde9fbfa146c5874d221e8fa24bb6b788" version="1">Scribe</content>
+  <content contentuid="hb0ee4fb15cb14231a5192080dfe2f5899454" version="1">Are you sure?</content>
+  <content contentuid="h9dfc0b36159446908367ac93d8a5afd7ffe6" version="1">Yes</content>
+  <content contentuid="h51a08063830a4dcfa77bbfc92160ce821091" version="1">No</content>
+  <content contentuid="hb139383f52344926b756a9667b1097610157" version="1">Pause</content>
+  <content contentuid="h3a4b68e77df141c7a76c6ca050b534e5bafc" version="1">Resume</content>
+  <content contentuid="h5e00e5a51c0949a090c11622471bdaa21883" version="1">left...</content>
+  <content contentuid="hf5a5e4b9783f49b99d8604b474aa5e64d7g9" version="1">Temporarily pause scribing.</content>
+  <content contentuid="h0b07f23a9b9f4c9c8b23fdc380963e3f6f44" version="1">Resume scribing.</content>
+  <content contentuid="he939d30cd19142b8986baf68ba5345bf182a" version="1">and</content>
+  <content contentuid="hdfb9114fbb1f4065a5f35be631d258259886" version="1">hours</content>
+  <content contentuid="heab59a83f47f4b5da96de01308c587b8gf77" version="1">Enabled</content>
+  <content contentuid="h805e020fa9094b32bcfd9f004d2bb0b22g6f" version="1">Disabled</content>
+  <content contentuid="h8f16d220482048e2b25f23738b3064dd40d1" version="1">Will scribe for 2 hours tonight.</content>
+  <content contentuid="h52b77fd8dba741b5a6d43dd6d2d6fcc9edbe" version="1">Spell is not prepared!</content>
+  <content contentuid="h52704023eb814287aee2e0738207741456cf" version="1">Missing</content>
+  <content contentuid="h8acb77de532044dc8c652f266df4d597c5g7" version="1">a parchment</content>
+  <content contentuid="h788063d1bc4d477789bf63ce686269e45153" version="1">a quill</content>
+  <content contentuid="h251a54280af54854a3aa183fbb84087da9ae" version="1">ink</content>
+  <content contentuid="hd205d29953614bd0b06d4416ca5f7b9cd5b8" version="1">Wizards can copy scrolls with cantrips into their spellbooks.</content>
+  <content contentuid="h8b4f9c38a3a24cd9b810df449130c812e336" version="1">[5e] Wizards cannot copy scrolls with cantrips into their spellbooks.&lt;br&gt;This setting can only be changed globally for all characters.</content>
+  <content contentuid="hcda64c5b293e4596986e7d0008da5e2516ac" version="1">5e Reference</content>
+  <content contentuid="h0e7fa0aaa910438d870749a6ec9a904e494f" version="1">Spell</content>
+  <content contentuid="he1f23bd31581406ba89781c4c802a150ecc9" version="1">Level</content>
+  <content contentuid="h6f3436bef8a54cb6a27665d8a9a9771a8b16" version="1">Casting Settings</content>
+  <content contentuid="h02252415c01e4e7d8c2317d46237bde97377" version="1">Copying Settings</content>
+  <content contentuid="h57ffb72073bf4f9f83ae82fa8c883109aded" version="1">Scribing Settings</content>
+  <content contentuid="h8f01c2baa17447deb05a5e5da43c210647d3" version="1">Set</content>
+  <content contentuid="h5dd341f0d28d40fd9d31ab55ffcb2caaa3a1" version="1">Cancel</content>
 </contentList>

@@ -363,7 +363,9 @@ end
 --- Consume action resource required for the spell
 ---@param characterGuid string
 ---@param resource string
-local function ConsumeActionResource(characterGuid, resource)
+function ConsumeActionResource(characterGuid, resource)
+    -- This is jank, but it works
+    -- ActionPoint, 1 = ActionPoint:1
     local consumeName, number = string.match(resource, "([^:]+):(%d+)")
     local consumeAmount = tonumber(number)
     local character = Ext.Entity.Get(characterGuid)
@@ -384,6 +386,32 @@ local function ConsumeActionResource(characterGuid, resource)
                 end
             end
         end
+    end
+end
+
+--- Consume spell slot required for the spell
+--- @param characterGuid string
+--- @param spellId string
+function ConsumeSpellSlot(characterGuid, spellId)
+    local character = Ext.Entity.Get(characterGuid)
+    local spell = Ext.Stats.Get(spellId)
+    local spellSlotGuid = "d136c5d9-0ff0-43da-acce-a74a07f8d6bf"
+
+    if character and character.ActionResources and spell and spell.Level then
+        local resources = character.ActionResources.Resources
+
+        for resourceGuid, resourceData in pairs(resources) do
+            if resourceGuid == spellSlotGuid then
+                for _, spellSlot in ipairs(resourceData) do
+                    if spellSlot and spellSlot.Level and spellSlot.Level == spell.Level then
+                        spellSlot.Amount = spellSlot.Amount - 1
+                        break
+                    end
+                end
+            end
+        end
+
+        character:Replicate("ActionResources")
     end
 end
 
@@ -422,7 +450,10 @@ function OnStoppedCasting(character)
     end
 end
 
-local function RemoveLearnedSpell(characterGuid, spellId)
+--- Remove a learned spell from the character, since we can't prevent learning spells
+---@param characterGuid string
+---@param spellId string
+function RemoveLearnedSpell(characterGuid, spellId)
     local found = false
     local character = Ext.Entity.Get(characterGuid)
     local characterName = GetDisplayName(characterGuid)
@@ -477,6 +508,7 @@ local function RemoveLearnedSpell(characterGuid, spellId)
             character:Replicate("LearnedSpells")
 
             if found == true then
+                -- Something somewhere readds the spells to components during processing, so we need to retry until it's gone
                 RemoveLearnedSpell(characterGuid, spellId)
             else
                 Log("Removed %s from %s", spellId, characterName)
@@ -488,7 +520,10 @@ local function RemoveLearnedSpell(characterGuid, spellId)
     end
 end
 
-local function TryLearnSpell(characterGuid, spellId)
+--- Try to learn a spell from a scroll
+---@param characterGuid string
+---@param spellId string
+function TryLearnSpell(characterGuid, spellId)
     if characterGuid and spellId then
         local spellStats = Ext.Stats.Get(spellId)
         local progression = GetCharacterProgression(characterGuid)
@@ -499,8 +534,10 @@ local function TryLearnSpell(characterGuid, spellId)
             local configValue = GetSetting(characterGuid, "ScribeRollBonus") or 0
             local scribeDC = math.clamp(spellLevel + configValue, -9, 20)
 
+            -- Check if wizard level is high enough to learn the spell, since the game doesn't check for it
             if GetSetting(characterGuid, "RequireWizardLevels") == true then
                 local wizardLevel = progression[wizardTable].Level
+                -- Wizard spell slots are gained every 2 levels
                 local wizardSpellSlot = math.floor((wizardLevel + 1) / 2)
 
                 if wizardSpellSlot < spellLevel and ScrollLearning and ScrollLearning[characterGuid] then
@@ -517,12 +554,15 @@ local function TryLearnSpell(characterGuid, spellId)
     end
 end
 
+--- Process wizard spell learning queue, since bulk learning is possible
+---@param characterGuid string
 function ProcessScrollLearning(characterGuid)
     local characterName = GetDisplayName(characterGuid)
 
     if ScrollLearning[characterGuid] == nil or #ScrollLearning[characterGuid] == 0 then
         Log("Finished processing spell learning for %s", characterName)
 
+        -- Restart processing if new spells were learned while the queue was being processed
         if ScrollLearningQueue[characterGuid] ~= nil then
             ScrollLearningQueue[characterGuid] = nil
             GatherNewLearnedSpells(characterGuid)
@@ -533,6 +573,8 @@ function ProcessScrollLearning(characterGuid)
     TryLearnSpell(characterGuid, ScrollLearning[characterGuid][1])
 end
 
+--- Gather new spells learned by the wizard
+---@param characterGuid string
 function GatherNewLearnedSpells(characterGuid)
     local character = Ext.Entity.Get(characterGuid)
 
@@ -545,6 +587,7 @@ function GatherNewLearnedSpells(characterGuid)
             for _, spellId in pairs(currentSpells) do
                 if LearnedSpells[characterGuid][spellId] == nil then
                     if ArrayContains(ScrollLearning[characterGuid], spellId) == false then
+                        -- Only add spells that are not already in the queue
                         table.insert(ScrollLearning[characterGuid], spellId)
                     end
                 end
@@ -574,6 +617,7 @@ function OnLearnedSpell(character)
             ScrollLearning[characterGuid] = {}
         end
 
+        -- Player learned more spells while the queue was being processed
         if #ScrollLearning[characterGuid] > 0 then
             ScrollLearningQueue[characterGuid] = true
             Log("Already being processed: %s", characterName)
@@ -612,10 +656,19 @@ function OnRollResult(eventName, osiCharacterGuid, rollResult)
                 table.remove(ScrollLearning[characterGuid], 1)
                 ProcessScrollLearning(characterGuid)
             end
+        elseif eventName == "TC_CraftScrollCheck" and ActiveScribing and ActiveScribing[characterGuid] then
+            if rollResult == 1 then
+                ProcessScribingProgress(characterGuid)
+            else
+                ActiveScribing[characterGuid].Processed = true
+                TrySaveScribingProgress()
+            end
         end
     end
 end
 
+--- Get wizard learned spells
+---@param characterGuid string
 function GetLearnedSpells(characterGuid)
     local character = Ext.Entity.Get(characterGuid)
     local spellIds = {}
@@ -623,7 +676,7 @@ function GetLearnedSpells(characterGuid)
     if character and character.LearnedSpells then
         local learnedSpells = character.LearnedSpells
 
-        if learnedSpells and learnedSpells.field_18 and learnedSpells.field_18[wizardClassGuid] then
+        if learnedSpells and learnedSpells.field_18 and learnedSpells.field_18[wizardClassGuid] then -- TODO field_18 will be deprecated!
             local spellTable = learnedSpells.field_18[wizardClassGuid]
 
             for _, spell in pairs(spellTable) do
@@ -635,6 +688,8 @@ function GetLearnedSpells(characterGuid)
     return spellIds
 end
 
+--- Cache wizard learned spells when characters join party
+---@param osiCharacterGuid string
 function AddCharacterLearnedSpells(osiCharacterGuid)
     local characterGuid = GetGuid(osiCharacterGuid)
 
@@ -644,6 +699,7 @@ function AddCharacterLearnedSpells(osiCharacterGuid)
     end
 end
 
+--- Recreate scroll items to fix spellbook and use action mismatch when updating root templates
 function RecreateScrolls()
     local spellBookEntities = Ext.Entity.GetAllEntitiesWithComponent("SpellBook")
     local scrollStacks = {}
@@ -655,18 +711,21 @@ function RecreateScrolls()
             local spellMatch = false
             local originatorMatch = false
 
+            -- UseActions update correctly when templates are changed for existing item entities
             for _, action in ipairs(useActions) do
                 if string.find(action.Spell, "TrueScrolls") then
                     spellMatch = true
                 end
             end
 
+            -- SpellBook component gets populated on item creation, so we need to recreate the item to update it
             for _, spell in ipairs(spells) do
                 if string.find(spell.Id.OriginatorPrototype, "TrueScrolls") then
                     originatorMatch = true
                 end
             end
 
+            -- Only recreate items that have mismatched spellbook and use action
             if spellMatch ~= originatorMatch then
                 if entity.InventoryMember and entity.GameObjectVisual and entity.Uuid then
                     local inventory = entity.InventoryMember.Inventory
@@ -684,7 +743,6 @@ function RecreateScrolls()
                         }
 
                         table.insert(scrollStacks, scrollData)
-                        Log("Updating scrolls for %s", GetDisplayName(ownerGuid))
                     end
                 end
             end
@@ -695,12 +753,13 @@ function RecreateScrolls()
         Osi.RequestDelete(data.Item)
     end
 
+    -- Add new ones only after deleting to avoid stacking issues while deleting
     for _, data in ipairs(scrollStacks) do
         Osi.TemplateAddTo(data.Template, data.Guid, data.Amount)
     end
 end
 
-function OnGameplayStarted(levelName)
+function OnGameplayStarted()
     -- Store all spells learned from scrolls for each character
     local learnedSpellsEntities = Ext.Entity.GetAllEntitiesWithComponent("LearnedSpells")
 
@@ -714,10 +773,12 @@ function OnGameplayStarted(levelName)
             end
         end
     end
-    
+
     RecreateScrolls()
 end
 
+--- Failsafe to remove scroll casting status and reapply boosts when reset is clicked
+---@param owner string
 function ResetServerCharacter(owner)
     local resetScope = {}
 
@@ -735,13 +796,555 @@ function ResetServerCharacter(owner)
     end
 end
 
+--- Update party members and send data to clients
 function UpdatePartyMembers()
     Ext.Vars.SyncModVariables()
-    local host = GetGuid(Osi.GetHostCharacter())
     local partyMembers = GetPartyMembers()
+    local thiefClassTable = "f6acc595-46b4-4d96-b7d5-6f33366fc2de"
+    local artificerClassTable = "6b701f1f-c477-43f0-9afe-0e169f65fc7a"
+    local wizardTable = "d18eda7e-4b7d-490d-9952-cd33a3c60479"
+    local partyData = {}
 
-    if host and partyMembers then
-        Ext.Net.PostMessageToClient(host, "UpdatePartyMembers", Ext.Json.Stringify(partyMembers))
+    for characterGuid, _ in pairs(partyMembers) do
+        local character = Ext.Entity.Get(characterGuid)
+        local characterSpells = GetCharacterSpells(characterGuid)
+        local progression = GetCharacterProgression(characterGuid)
+        local isThief = false
+        local isArtificer = false
+        local isWizard = false
+        local proficientArcana = false
+        local sortedSpells = {}
+
+        if GetSetting(characterGuid, "CraftingArcanaProficiency") == false then
+            proficientArcana = true
+        end
+
+        for spellId, _ in pairs(characterSpells.SpellBook) do
+            local spell = Ext.Stats.Get(spellId)
+
+            -- Get every spell in character's spellbook
+            if spell and spell.Level and spell.DisplayName then
+                local spellData = {
+                    Spell = spellId,
+                    Name = Ext.Loca.GetTranslatedString(spell.DisplayName),
+                    Level = spell.Level
+                }
+
+                -- Add to array for sorting
+                table.insert(sortedSpells, spellData)
+            else
+                Log("%s is missing level!", spellId)
+            end
+        end
+
+        -- Sort spells by level and name
+        table.sort(sortedSpells, function(a, b)
+            if a.Level ~= b.Level then
+                return a.Level < b.Level
+            else
+                return a.Name < b.Name
+            end
+        end)
+
+        characterSpells.SpellBook = {}
+
+        for _, spellData in ipairs(sortedSpells) do
+            table.insert(characterSpells.SpellBook, spellData.Spell)
+        end
+
+        -- Check if character is proficient in Arcana
+        if proficientArcana == false and character and character.BoostsContainer then
+            local boosts = character.BoostsContainer.Boosts
+
+            for _, boost in ipairs(boosts) do
+                if boost.Type == "ProficiencyBonus" then
+                    local boostTable = boost.Boosts
+
+                    for _, boostEntity in ipairs(boostTable) do
+                        if boostEntity.ProficiencyBonusBoost.Skill == "Arcana" then
+                            proficientArcana = true
+                        end
+                    end
+                end
+            end
+        end
+
+        if progression then
+            if progression[thiefClassTable] then
+                isThief = true
+            end
+
+            if progression[artificerClassTable] then
+                isArtificer = true
+            end
+
+            if progression[wizardTable] then
+                isWizard = true
+            end
+        end
+
+        partyData[characterGuid] = {
+            Proficient = proficientArcana,
+            Spells = characterSpells,
+            Thief = isThief,
+            Artificer = isArtificer,
+            Wizard = isWizard
+        }
+    end
+
+    Ext.Net.BroadcastMessage("TrueScrolls_UpdatePartyMembers", Ext.Json.Stringify(partyData))
+end
+
+--- Check if character is in combat and update scribing progress
+---@param characterGuid string
+function OnEnteredCombat(characterGuid)
+    if ActiveScribing[characterGuid] then
+        local craftingRuleset = GetSetting(characterGuid, "CraftingRuleset")
+
+        if craftingRuleset == "RulesetRAW" then
+            ActiveScribing[characterGuid].SkipDay = true
+            SavePersistence(true)
+        elseif craftingRuleset == "RulesetSimplified" then
+            ActiveScribing[characterGuid].ShortDay = true
+            SavePersistence(true)
+        end
+    end
+end
+
+--- Try saving scribing progress after long rest
+function TrySaveScribingProgress()
+    for _, scribing in pairs(ActiveScribing) do
+        if not scribing.Processed then
+            return
+        end
+    end
+
+    -- Enable inventory and gold events after all scribing progress is processed
+    ScribingProcess = false
+    SetTimer(100, CalculateScribingCost, true, true)
+    SetTimer(100, UpdateSpellPreparedStatus, nil, true)
+    SetTimer(100, SavePersistence)
+end
+
+--- Apply a random complication to the character
+--- @param characterGuid string
+function ApplyRandomComplication(characterGuid)
+    local data = ActiveScribing[characterGuid]
+
+    local complications = {
+        [1] = function()
+            -- Does literally nothing, just an icon
+            Osi.ApplyStatus(characterGuid, "CAMP_DAISY_EXHAUSTED", 0, 1)
+            SetTimer(1000, ApplyNewStatus, characterGuid, "TRUESCROLLS_COMPLICATION", 0)
+        end,
+        [2] = function()
+            Osi.UseSpell(characterGuid, data.Spell, characterGuid)
+            ConsumeSpellSlot(characterGuid, data.Spell)
+            SetTimer(1000, ApplyNewStatus, characterGuid, "TRUESCROLLS_COMPLICATION", 0)
+        end,
+        [3] = function()
+            local spellList = {}
+
+            for spellId, spellData in pairs(ScrollsList) do
+                if spellData.Level == data.Level then
+                    table.insert(spellList, spellId)
+                end
+            end
+
+            -- Changes the scribed spell to a random one of the same level without player's knowledge
+            data.ComplicationScroll = spellList[math.random(1, #spellList)]
+
+            SavePersistence()
+        end
+    }
+
+    complications[math.random(1, 3)]()
+end
+
+--- Process scribing progress for the character
+---@param characterGuid string
+function ProcessScribingProgress(characterGuid)
+    local partyMembers = GetPartyMembers()
+    local data = ActiveScribing[characterGuid]
+    local characterGold = Osi.GetGold(data.Character)
+    local remainder
+    local cost = data.Payment
+    local progress = 1
+
+    -- Only take gold when CumulativeProgress is 0 or > 1
+    if data.SkipPayment == false then
+        if characterGold < data.Payment then
+            remainder = data.Payment - characterGold
+            cost = characterGold
+        end
+
+        Osi.AddGold(data.Character, -cost)
+
+        Log("Took %s gold from %s", cost, GetDisplayName(data.Character))
+
+        -- Don't need additional checks if characters have gold
+        -- We know they do from CalculateScribingCost
+        if remainder ~= nil then
+            for character, _ in pairs(partyMembers) do
+                local gold = Osi.GetGold(character)
+
+                if gold < remainder then
+                    remainder = remainder - gold
+                    Osi.AddGold(character, -gold)
+                    Log("Took %s gold from %s", gold, GetDisplayName(character))
+                else
+                    Osi.AddGold(character, -remainder)
+                    remainder = nil
+                    Log("Took %s gold from %s", remainder, GetDisplayName(character))
+                    break
+                end
+            end
+        end
+
+        data.Paid = data.Paid + data.Payment
+
+        local wholeDays = math.floor(data.CumulativeProgress)
+
+        -- Once full day is processed, remove it from CumulativeProgress
+        if wholeDays > 0 then
+            data.CumulativeProgress = data.CumulativeProgress - wholeDays
+        end
+    end
+
+    if GetSetting(characterGuid, "CraftingRequireItems") == true then
+        local items = GetCharacterScribeItems(characterGuid)
+
+        if data.ScrollUsed == false then
+            Osi.TemplateRemoveFromUser(items.Scroll.Guid, characterGuid, 1)
+            data.ScrollUsed = true
+        end
+
+        -- Maybe I'll add more item qualities in the future with unique properties
+        if items.Quill.Quality == "Basic" then
+            local quillBreakChance = GetSetting(characterGuid, "CraftingQuillBreakChance")
+
+            if math.random() <= quillBreakChance then
+                Osi.TemplateRemoveFromUser(items.Quill.Guid, characterGuid, 1)
+            end
+        end
+
+        if items.Ink.Quality == "Basic" then
+            Osi.TemplateRemoveFromUser(items.Ink.Guid, characterGuid, 1)
+        end
+    end
+
+    -- RulesetLightActivity setting allows to scribe for 2h during long rest
+    if data.ShortDay == true then
+        progress = 0.25
+    end
+
+    data.CumulativeProgress = data.CumulativeProgress + progress
+    data.ElapsedTime = data.ElapsedTime + progress
+    data.CanAfford = false
+    data.SkipDay = false
+    data.ShortDay = false
+    data.HasItems = false
+    data.CurrentItems = GetCharacterScribeItems()
+    data.ComplicationCount = 0
+    data.Processed = true
+
+    -- Roll for a complication every workweek of scribing
+    if data.ElapsedTime % 5 == 0 and GetSetting(characterGuid, "CraftingComplications") == true then
+        local chance = GetSetting(characterGuid, "CraftingComplicationChance")
+
+        if math.random() <= chance then
+            SetTimer(1000, ApplyRandomComplication, characterGuid)
+        end
+    end
+
+    if data.ElapsedTime >= data.Time then
+        local spellId = data.Spell
+
+        if data.ComplicationScroll ~= nil then
+            spellId = data.ComplicationScroll
+            SetTimer(1000, ApplyNewStatus, characterGuid, "TRUESCROLLS_COMPLICATION", 0)
+        end
+
+        if ScrollsList[spellId] then
+            Osi.TemplateAddTo(ScrollsList[spellId].Template, characterGuid, 1)
+
+            ActiveScribing[characterGuid] = nil
+        end
+    end
+
+    -- Osi.RequestPassiveRoll is very slow, so we only save progress after all characters are processed
+    TrySaveScribingProgress()
+end
+
+function OnLongRestFinished()
+    -- Prevents inventory and gold events triggering recalculation while processing costs
+    ScribingProcess = true
+    CalculateScribingCost(true, true)
+
+    for characterGuid, data in pairs(ActiveScribing) do
+        data.Processed = false
+
+        if data.CanAfford == true and data.SkipDay == false and data.HasItems == true then
+            if GetSetting(characterGuid, "CraftingArcanaCheck") == true then
+                local configValue = GetSetting(characterGuid, "CraftingCheckBonus") or 0
+                local craftDC = math.clamp(data.Level + configValue, -9, 20)
+
+                Osi.RequestPassiveRoll(characterGuid, characterGuid, "SkillCheck", "Arcana", scrollCastDC[craftDC], 0, "TC_CraftScrollCheck")
+            else
+                ProcessScribingProgress(characterGuid)
+            end
+        else
+            data.ComplicationCount = data.ComplicationCount + 1
+
+            -- Apply a random complication if character has failed to scribe for twice the scribing time
+            if data.ComplicationCount >= data.Time * 2 and GetSetting(characterGuid, "CraftingComplications") == true then
+                SetTimer(1000, ApplyRandomComplication, characterGuid)
+                data.ComplicationCount = 0
+            end
+
+            data.SkipDay = false
+            data.ShortDay = false
+        end
+    end
+
+    if next(ActiveScribing) == nil then
+        SavePersistence()
+    end
+end
+
+--- Calculate the cost of scribing spells for each character in the party
+---@param skipNotification? boolean
+---@param skipUpdate? boolean
+function CalculateScribingCost(skipNotification, skipUpdate)
+    skipNotification = skipNotification or false
+    local partyMembers = GetPartyMembers()
+    local cachedScribing = DeepCopy(ActiveScribing)
+    local individualCost = {}
+    local totalGold = 0
+    local dirty = false
+
+    for characterGuid, _ in pairs(partyMembers) do
+        totalGold = totalGold + Osi.GetGold(characterGuid)
+    end
+
+    for characterGuid, data in pairs(cachedScribing) do
+        local progress = cachedScribing[characterGuid].CumulativeProgress
+        ActiveScribing[characterGuid].CanAfford = false
+        ActiveScribing[characterGuid].HasItems = false
+        ActiveScribing[characterGuid].SkipPayment = false
+
+        -- Cost is only calculated for each full day of scribing
+        -- Short day adds 0.25 to CumulativeProgress, so we skip the calculation below 1
+        if cachedScribing[characterGuid].Paused == false and (progress >= 1 or progress == 0) then
+            local payment = data.Cost.BasePayment
+
+            -- Last day gets the remainder added to the cost for unevenly split payments
+            if data.Time - data.ElapsedTime == 1 then
+                payment = payment + data.Cost.Remainder
+            end
+
+            -- Add each cost to array for sorting
+            table.insert(individualCost, {
+                Character = characterGuid,
+                Payment = payment
+            })
+
+            if GetSetting(characterGuid, "CraftingRequireItems") == true then
+                local items = GetCharacterScribeItems(characterGuid)
+                local hasItems = true
+
+                for type, item in pairs(items) do
+                    -- Scroll item is only used once per scribing process
+                    if item.Quality == "None" and (type ~= "Scroll" or data.ScrollUsed == false) then
+                        hasItems = false
+                    end
+                    
+                    if data.CurrentItems[type] and item.Quality ~= data.CurrentItems[type] then
+                        dirty = true
+                    end
+                end
+
+                ActiveScribing[characterGuid].HasItems = hasItems
+                ActiveScribing[characterGuid].CurrentItems = items
+            else
+                ActiveScribing[characterGuid].HasItems = true
+            end
+        elseif progress < 1 then
+            ActiveScribing[characterGuid].CanAfford = true
+            ActiveScribing[characterGuid].HasItems = true
+            ActiveScribing[characterGuid].SkipPayment = true
+        end
+    end
+
+    table.sort(individualCost, function(a, b)
+        return a.Payment < b.Payment
+    end)
+
+    for _, data in ipairs(individualCost) do
+        local characterGold = Osi.GetGold(data.Character)
+        local canAfford = false
+
+        if characterGold >= data.Payment then
+            canAfford = true
+            totalGold = totalGold - data.Payment
+        elseif GetSetting(data.Character, "CraftingSharedGold") == true and totalGold >= data.Payment then
+            canAfford = true
+            totalGold = totalGold - data.Payment
+        end
+
+        -- Show notification if a status has changed
+        if cachedScribing[data.Character].CanAfford ~= canAfford or cachedScribing[data.Character].Payment ~= data.Payment then
+            dirty = true
+        end
+
+        ActiveScribing[data.Character].CanAfford = canAfford
+        ActiveScribing[data.Character].Payment = data.Payment
+    end
+
+    SavePersistence(dirty and not skipNotification, skipUpdate)
+end
+
+--- Pause or resume scribing process for the given character
+---@param characterGuid string
+function TogglePauseScribing(characterGuid)
+    if ActiveScribing[characterGuid] then
+        ActiveScribing[characterGuid].Paused = not ActiveScribing[characterGuid].Paused
+        CalculateScribingCost(true)
+    end
+end
+
+--- Cancel scribing process for the given character
+--- @param characterGuid string
+function CancelScribing(characterGuid)
+    if ActiveScribing[characterGuid] then
+        ActiveScribing[characterGuid] = nil
+        SavePersistence()
+    end
+end
+
+--- Start scribing process with the given data
+---@param scribeData table
+function StartScribing(scribeData)
+    if scribeData == nil then
+        return
+    end
+
+    ActiveScribing[scribeData.Character] = scribeData
+    CalculateScribingCost(true)
+end
+
+--- Update scribing data with new values from client after scribing settings change
+---@param scribeData table
+function UpdateScribedSpells(scribeData)
+    for characterGuid, data in pairs(ActiveScribing) do
+        local newData = scribeData[characterGuid]
+
+        if newData then
+            ActiveScribing[characterGuid].Time = newData.Time
+            ActiveScribing[characterGuid].Cost = newData.Cost
+        end
+    end
+
+    SavePersistence()
+end
+
+--- Check if scribed spell is prepared and update the status
+---@alias RestType "ShortRest" | "LongRest"
+---@param restType? RestType
+---@param skipUpdate? boolean
+function UpdateSpellPreparedStatus(restType, skipUpdate)
+    local dirty = false
+
+    for characterGuid, data in pairs(ActiveScribing) do
+        local character = Ext.Entity.Get(characterGuid)
+        local characterSpells = GetCharacterSpells(characterGuid)
+        local cachedPrepared = data.Prepared
+        local cachedSkipDay = data.SkipDay
+        local cachedShortDay = data.ShortDay
+        local preparedSetting = GetSetting(characterGuid, "CraftingSpellPrepared")
+
+        if characterSpells.PreparedSpells[data.Spell] or preparedSetting == "PreparedDisabled" then
+            data.Prepared = true
+        else
+            data.Prepared = false
+        end
+
+        -- Skip the day if the spell is not prepared and prepared setting isn't disabled
+        if data.Prepared == false and (preparedSetting == "PreparedShortRest" or (restType == "LongRest" and preparedSetting == "PreparedLongRest")) then
+            data.SkipDay = true
+        end
+
+        if restType == "ShortRest" and character and character.CampPresence == nil then
+            local craftingRuleset = GetSetting(characterGuid, "CraftingRuleset")
+
+            if craftingRuleset == "RulesetRAW" then
+                data.SkipDay = true
+            elseif craftingRuleset == "RulesetSimplified" then
+                data.ShortDay = true
+            end
+        end
+
+        -- Show notification if a status has changed
+        if cachedPrepared ~= data.Prepared or cachedSkipDay ~= data.SkipDay or cachedShortDay ~= data.ShortDay then
+            dirty = true
+        end
+    end
+
+    SavePersistence(dirty, skipUpdate)
+end
+
+function OnShortRested(osiGuid)
+    local host = Osi.GetHostCharacter()
+
+    -- Triggers for every character in the party, but we only need to update once
+    if host and host == GetGuid(osiGuid) then
+        UpdateSpellPreparedStatus("ShortRest")
+    end
+end
+
+function OnEndDayStateChanged(entity)
+    if entity and entity.CampEndTheDayState then
+        local newState
+
+        -- 2 = Long rest started, 4 = Long rest finished
+        if entity.CampEndTheDayState.State == 2 then
+            newState = true
+        elseif entity.CampEndTheDayState.State == 4 then
+            newState = false
+        end
+
+        if newState == false then
+            OnLongRestFinished()
+        elseif newState == true then
+            UpdateSpellPreparedStatus("LongRest")
+        end
+
+        if newState ~= nil then
+            local function DelayMessage()
+                Ext.Net.BroadcastMessage("TrueScrolls_ClientEndDayStateChanged", Ext.Json.Stringify({
+                    State = newState
+                }))
+            end
+
+            -- Delay a bit while the game is loading to show notification
+            SetTimer(3000, DelayMessage)
+        end
+    end
+end
+
+--- Recalculate scribing when inventory is updated with templates that match scribing items
+--- @param characterGuid string
+--- @param fullTemplate string
+function InventoryUpdated(characterGuid, fullTemplate)
+    if ScribingProcess == false and ActiveScribing[characterGuid] and GetSetting(characterGuid, "CraftingRequireItems") == true then
+        for _, itemList in pairs(ScribingItemTypes) do
+            for _, templateId in pairs(itemList) do
+                if string.sub(fullTemplate, -#templateId) == templateId then
+                    CalculateScribingCost()
+                    return
+                end
+            end
+        end
     end
 end
 
@@ -749,6 +1352,8 @@ function OnSessionLoaded()
     InitializeGameplayTables()
     InitializeSpellLists()
     LoadBackupConfig()
+    LoadPersistence()
+    ScribingProcess = false
 
     Log("SESSION LOADED - SERVER")
 end
