@@ -139,7 +139,7 @@ local function PopulateSettingsTab(treeParent, tabOwner, tabName, characterData)
             max = 10,
             condition = GetSetting(tabOwner, "StaticAttackRoll")
         }, {
-            label1 = "Static Spell",
+            label1 = "StaticSpell",
             label2 = "SaveDC",
             type = "checkbox",
             setting = "StaticSpellSaveDC",
@@ -191,7 +191,7 @@ local function PopulateSettingsTab(treeParent, tabOwner, tabName, characterData)
             max = 10,
             condition = GetSetting(tabOwner, "ScribeRoll")
         }, {
-            label1 = "Can Copy",
+            label1 = "CanCopy",
             label2 = "Cantrips",
             type = "checkbox",
             setting = "WizardCopyCantrips",

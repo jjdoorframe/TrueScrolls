@@ -173,7 +173,9 @@ StringTable = {
     CopyingSettings = "h02252415c01e4e7d8c2317d46237bde97377",
     ScribingSettings = "h57ffb72073bf4f9f83ae82fa8c883109aded",
     Set = "h8f01c2baa17447deb05a5e5da43c210647d3",
-    Cancel = "h5dd341f0d28d40fd9d31ab55ffcb2caaa3a1"
+    Cancel = "h5dd341f0d28d40fd9d31ab55ffcb2caaa3a1",
+    CanCopy = "h7a7b86c3e8c74b448c674b9e2a548d8a045c",
+    Cantrips = "h85760a2e90e840289ee5a460a08312f543c3"
 }
 
 -- String table for combo box option tooltips
