@@ -43,10 +43,17 @@ function UpdateScrollSpells(clientSpells)
 
                 for i, actionData in ipairs(scrollTemplate.OnUsePeaceActions) do
                     if actionData and actionData.Type == "UseSpell" then
-                        local spellStats = Ext.Stats.Get(actionData.Spell)
-
                         if actionData.Spell == "Projectile_Fireball_FromScroll" then
                             actionData.Spell = "Projectile_Fireball"
+                        end
+
+                        local spellStats = Ext.Stats.Get(actionData.Spell)
+                        local spellLevel = -1
+
+                        if spellStats and spellStats.Level then
+                            spellLevel = spellStats.Level
+                        else
+                            ForceLog("Failed to get spell level for %s", actionData.Spell)
                         end
 
                         spellRef = actionData.Spell
@@ -65,7 +72,7 @@ function UpdateScrollSpells(clientSpells)
                         local trueSpell = GetTrueSpell(actionData.Spell)
                         scrollsList[trueSpell] = {
                             Template = object.RootTemplate,
-                            Level = spellStats.Level
+                            Level = spellLevel
                         }
                     elseif actionData and actionData.Type == "LearnSpell" then
                         local checkSpell = actionData.Spell
@@ -74,13 +81,15 @@ function UpdateScrollSpells(clientSpells)
                             checkSpell = spellRef
                         end
 
-                        local spellStats = Ext.Stats.Get(checkSpell)
+                        if checkSpell ~= nil and checkSpell ~= "" then
+                            local spellStats = Ext.Stats.Get(checkSpell)
 
-                        if spellStats and spellStats.Level == 0 then
-                            if wizardCantris == true then
-                                actionData.Spell = tostring(checkSpell)
-                            else
-                                actionData.Spell = ""
+                            if spellStats and spellStats.Level == 0 then
+                                if wizardCantris == true then
+                                    actionData.Spell = tostring(checkSpell)
+                                else
+                                    actionData.Spell = ""
+                                end
                             end
                         end
                     end

@@ -62,6 +62,12 @@ function Log(message, ...)
     end
 end
 
+---@param message string
+function ForceLog(message, ...)
+    local formattedMessage = string.format(message, ...)
+    Ext.Utils.Print("[True Scrolls] " .. formattedMessage)
+end
+
 -- Reloads stats files at runtime
 -- Only enabled with debugging
 function ReloadStats()
@@ -183,7 +189,7 @@ function KeysToNumbers(tbl)
             normalizedTable[numericKey] = v
         end
     end
-    
+
     return normalizedTable
 end
 
