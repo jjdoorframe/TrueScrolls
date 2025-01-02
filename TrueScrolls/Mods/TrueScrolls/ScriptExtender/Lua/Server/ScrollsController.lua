@@ -245,7 +245,7 @@ function OnItemUsed(osiCharacterGuid, itemGuid, status)
     -- Check if the item being used is a scroll
     if status and item and item.Data then
         local itemStats = Ext.Stats.Get(item.Data.StatsId)
-        if itemStats and itemStats.Using == "_MagicScroll" then
+        if itemStats and itemStats.Using == "_MagicScroll" and string.sub(itemStats.Name, 1, 8) ~= "FFT_Rune" then
             local useActions = item.UseAction.UseActions
 
             for _, action in ipairs(useActions) do

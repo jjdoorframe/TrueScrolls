@@ -29,7 +29,7 @@ function UpdateScrollSpells(clientSpells)
         local object = Ext.Stats.Get(objectName)
 
         -- Get template referenced in each scroll object
-        if object and object.Using and object.Using == "_MagicScroll" then
+        if object and object.Using and object.Using == "_MagicScroll" and string.sub(object.Name, 1, 8) ~= "FFT_Rune" then
             local scrollTemplate
 
             if Ext.IsClient() == true then
