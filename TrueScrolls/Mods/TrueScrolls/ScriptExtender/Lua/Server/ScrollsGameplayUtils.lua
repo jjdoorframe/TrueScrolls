@@ -335,10 +335,13 @@ function GetPartyMembers()
     if party then
         for _, member in pairs(party) do
             local characterGuid = GetGuid(tostring(member[1]))
-            local character = Ext.Entity.Get(characterGuid)
 
-            if character and character.IsSummon == nil then
-                partyMembers[characterGuid] = true
+            if characterGuid ~= "" then
+                local character = Ext.Entity.Get(characterGuid)
+
+                if character and character.IsSummon == nil then
+                    partyMembers[characterGuid] = true
+                end
             end
         end
     end
