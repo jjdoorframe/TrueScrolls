@@ -71,28 +71,8 @@ function RegisterServerEntityListeners()
     end)
 
     Ext.Entity.OnChange("SpellBookPrepares", function(character)
-        if character and character.Uuid then
-            local characterGuid = character.Uuid.EntityUuid
-
-            if ActiveScribing[characterGuid] then
-                local spellPrepares = character.SpellBookPrepares.PreparedSpells
-                local data = ActiveScribing[characterGuid]
-                local prepared = {}
-
-                for _, spell in ipairs(spellPrepares) do
-                    if spell and spell.OriginatorPrototype then
-                        local spellId = spell.OriginatorPrototype
-        
-                        if ScrollsList[spellId] ~= nil then
-                            prepared[spellId] = true
-                        end
-                    end
-                end
-
-                if (data.Prepared == true and prepared[data.Spell] == nil) or (data.Prepared == false and prepared[data.Spell] ~= nil) then
-                    UpdateSpellPreparedStatus()
-                end
-            end
+        if character.Uuid ~= nil and GetSetting(character.Uuid.EntityUuid, "CraftingSpellPrepared") ~= "PreparedDisabled" then
+            UpdateSpellPreparedStatus()
         end
     end)
 end
